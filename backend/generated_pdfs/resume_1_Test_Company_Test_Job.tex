@@ -1,0 +1,80 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\geometry{letterpaper, margin=0.75in}
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=*, noitemsep, topsep=0pt} % Tighter lists for resume
+\usepackage{hyperref} % For clickable links
+
+% Custom commands as per instruction, defined minimally to ensure compilation
+\newcommand{\resheading}[1]{\section*{#1}\vspace{-1.5em}}
+\newcommand{\ressubheading}[1]{\textbf{#1}} % For job titles, project names etc.
+
+% Personal info command for top of resume
+\newcommand{\personalinfo}[5]{%
+    \begin{center}
+        \textbf{\Large #1}\\[5pt]
+        #2 $|$ #3 $|$ \href{https://#4}{#4} $|$ \href{https://#5}{#5}
+    \end{center}
+    \vspace{-1.5em} % Adjust spacing after personal info
+}
+
+\begin{document}
+
+% 0. PERSONAL DETAILS (HIGHEST PRIORITY - NEVER CHANGE)
+\personalinfo{Jane Doe}{(123) 456-7890}{jane.doe@example.com}{linkedin.com/in/janedoe}{github.com/janedoe}
+
+% 4. SKILLS SECTION
+\resheading{Skills}
+\begin{itemize}
+    \item \textbf{Languages:} \textbf{Python}, \textbf{JavaScript}, Java, SQL
+    \item \textbf{Frameworks/Libraries:} React, Django, Node.js, Vue.js, Flask, Spring Boot, Pandas, NumPy, Matplotlib
+    \item \textbf{Databases:} PostgreSQL, MongoDB
+    \item \textbf{Tools/Platforms:} Git, AWS, Docker
+\end{itemize}
+
+% 3. EXPERIENCE TRANSFORMATION (REAL JOBS ONLY)
+\resheading{Experience}
+\ressubheading{Junior Web Developer} \hfill Innovate Co. \\
+\textit{Jun 2022 – Present}
+\begin{itemize}
+    \item Developed and maintained robust client-facing web applications using \textbf{JavaScript} (Node.js, Vue.js), improving user engagement by \textbf{15\%} for critical features.
+    \item Optimized database queries in \textbf{MongoDB} for applications handling over \textbf{10,000 daily users}, reducing load times by an average of \textbf{20\%}.
+    \item Managed cloud infrastructure on \textbf{AWS}, ensuring \textbf{99.9\% uptime} and scalable deployment for client services, supporting rapid growth.
+\end{itemize}
+
+\vspace{0.5em} % Spacing between roles
+
+\ressubheading{Software Developer Intern} \hfill Tech Solutions Inc. \\
+\textit{May 2021 – Aug 2021}
+\begin{itemize}
+    \item Contributed to the development of enterprise software solutions, implementing new features that enhanced system efficiency by \textbf{10\%}.
+    \item Assisted in optimizing \textbf{SQL} database performance, leading to a \textbf{25\% reduction} in query execution time for key business intelligence reports.
+    \item Collaborated with a team of \textbf{5 engineers} to integrate new modules using \textbf{Java} and Spring Boot, streamlining data processing workflows.
+\end{itemize}
+
+% 2. PROJECT TRANSFORMATION (REAL PROJECTS ONLY)
+\resheading{Projects}
+\ressubheading{E-commerce Platform}
+\begin{itemize}
+    \item Engineered a full-stack e-commerce platform using \textbf{Python} (Django) for backend and \textbf{JavaScript} (React) for a dynamic frontend, supporting secure transactions.
+    \item Implemented user authentication and product management features, handling over \textbf{500 product listings} and \textbf{100 registered users} within the first month.
+    \item Designed and managed the \textbf{PostgreSQL} database schema, ensuring data integrity and efficient retrieval for all application modules.
+\end{itemize}
+
+\vspace{0.5em} % Spacing between projects
+
+\ressubheading{Data Analysis Tool}
+\begin{itemize}
+    \item Developed a data analysis tool using \textbf{Python} (Pandas, NumPy) to process and visualize large datasets, improving analysis efficiency by \textbf{30\%}.
+    \item Integrated a web interface with \textbf{Flask} to allow users to upload and interact with data, supporting analysis of up to \textbf{10,000 data points}.
+    \item Generated insightful visualizations using \textbf{Matplotlib}, enabling clearer interpretation of complex data trends for stakeholders.
+\end{itemize}
+
+% Education
+\resheading{Education}
+\ressubheading{Bachelor of Science in Computer Science} \hfill University of Technology \\
+\textit{Sep 2018 – May 2022} \hfill GPA: 3.8/4.0
+
+\end{document}

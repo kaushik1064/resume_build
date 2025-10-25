@@ -1,0 +1,19 @@
+# Python 3.11 required
+Flask
+Flask-CORS
+Flask-Limiter
+google-generativeai
+PyPDF2
+pdf2image
+Pillow
+requests
+beautifulsoup4
+lxml
+python-dotenv
+werkzeug
+gunicorn
+python-multipart
+aiofiles
+nest-asyncio
+crawl4ai
+selenium

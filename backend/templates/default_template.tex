@@ -1,0 +1,145 @@
+\documentclass[a4paper,10pt]{article}
+%-----------------------------------------------------------
+\usepackage[top=0.75in, bottom=0.75in, left=0.55in, right=0.85in]{geometry}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{palatino}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{color}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Resume},
+    pdfpagemode=FullScreen,
+}
+
+\definecolor{mygrey}{gray}{0.75}
+\textheight=9.8in
+\raggedbottom
+\setlength{\tabcolsep}{0in}
+\newcommand{\isep}{-2 pt}
+\newcommand{\lsep}{-0.5cm}
+\newcommand{\psep}{-0.6cm}
+\renewcommand{\labelitemii}{$\circ$}
+
+\pagestyle{empty}
+%-----------------------------------------------------------
+% Custom commands
+\newcommand{\resheading}[1]{%
+  \vspace{1em}%
+  \noindent\colorbox{mygrey}{%
+    \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+      \textbf{#1}%
+    }%
+  }%
+  \vspace{0.6em}%
+}
+
+\newcommand{\ressubheading}[3]{%
+\begin{tabular*}{\textwidth}{l @{\extracolsep{\fill}} r}
+    \textsc{\textbf{#1}} & \textsc{\textit{[#2]}} \\
+\end{tabular*}\vspace{-4pt}
+}
+
+%-----------------------------------------------------------
+\begin{document}
+
+% Header Section
+\vspace*{-1.5cm}
+\noindent
+
+\textbf{SRI KAUSHIK AYALURI} \hspace{9.6cm} {\bf srinukaus@gmail.com}\\
+\indent {\bf Machine Learning Engineer}  \hspace{10.3cm} {\bf +91-9381880485} \\
+\indent {\bf Visakhapatnam, India}  \hspace{7.9cm} {\bf linkedin.com/in/sri-kaushik-ayaluri} \\
+\indent {\bf github.com/kaushik1064} \\
+
+
+%-----------------------------------------------------------
+\resheading{EDUCATION}
+\vspace{0.4em}
+\begin{tabular}{ p{2.5cm} @{\hskip 0.15in} p{5.5cm} @{\hskip 0.15in} p{3.5cm} @{\hskip 0.15in} p{2.5cm} @{\hskip 0.15in} p{1.5cm} }
+\toprule
+\textbf{Degree} & \textbf{Specialization} & \textbf{Institute} & \textbf{Year} & \textbf{CPI} \\
+\midrule
+B.Tech & \textit{Mechanical Engineering} & SCE College & 2022 & 7.01 \\
+Intermediate & \textit{Physics, Chemistry, \& Mathematics} & Chaitanya College & 2018 & 8.5 \\
+10th Grade & - & S.F.S High School & 2016 & 8.7 \\
+\bottomrule
+\end{tabular}
+
+%-----------------------------------------------------------
+\resheading{WORK EXPERIENCE}
+\vspace{0.4em}
+\begin{itemize}
+  \item \textbf{Machine Learning \& Data Analytics Intern} — \textit{VELOXIVISION EDU TECH} \hfill Feb 2024–Aug 2024
+  \begin{itemize}
+    \item Engineered a \textbf{transaction analysis pipeline}, processing \textbf{50,000+ transactions} using \textbf{Pandas \& SQL}, reducing data processing time by \textbf{40\%}.
+    \item Developed a \textbf{K-Means clustering model} that segmented customers into \textbf{3 distinct groups}, improving recommendations by \textbf{30\%}.
+    \item Implemented an \textbf{anomaly detection system} (\textbf{Isolation Forest}) that flagged \textbf{98\% of frauds}, visualized via \textbf{Power BI}.
+  \end{itemize}
+
+  \item \textbf{Junior ML Engineer} — \textit{Omdena Organization} \hfill Oct 2023–Jan 2024
+  \begin{itemize}
+    \item Automated \textbf{web scraping pipelines} for Nepali news using \textbf{Selenium \& BeautifulSoup}, reducing acquisition time by \textbf{70\%}.
+    \item Fine-tuned a \textbf{BERT-based NER model}, boosting accuracy from \textbf{65\% to 90\%}.
+    \item Deployed model using \textbf{MLOps (Dagshub, Docker, CI/CD)}, reducing manual intervention by \textbf{60\%}.
+  \end{itemize}
+
+  \item \textbf{Data Scientist Intern} — \textit{Omdena Global Projects} \hfill May 2023–Jun 2023
+  \begin{itemize}
+    \item Built a recommendation model for Berlin grocery stores, achieving \textbf{90\% precision}.
+    \item Processed \textbf{10,000+ grocery listings} with optimized data scraping and NLP pipelines.
+  \end{itemize}
+\end{itemize}
+
+%-----------------------------------------------------------
+\resheading{PROJECTS}
+\vspace{0.4em}
+\begin{itemize}
+  \item \textbf{AI-Powered Browser Automation Platform} \hfill Jan 2025–Present
+  \begin{itemize}
+    \item Architected a full-stack AI browser automation platform (\textbf{FastAPI + Next.js}) with \textbf{12+ endpoints}.
+    \item Integrated \textbf{Gemini LLM, Groq Whisper, and OpenAI} for multimodal intelligence.
+  \end{itemize}
+
+  \item \textbf{Conversational AI Chatbot with Real-Time Web Scraping} \hfill Nov 2024–Dec 2024
+  \begin{itemize}
+    \item Built an end-to-end Flask chatbot using \textbf{LangChain + Mistral-7B}, improving speed by \textbf{40\%}.
+    \item Used \textbf{FAISS + HuggingFace Embeddings}, achieving \textbf{90\% retrieval accuracy}.
+  \end{itemize}
+
+  \item \textbf{AI Pipeline for Image Detection, Classification, and Captioning} \hfill Sep 2024–Oct 2024
+  \begin{itemize}
+    \item Developed a pipeline using \textbf{ViT + YOLOv5}, improving accuracy by \textbf{60\%}.
+    \item Enabled \textbf{real-time inference for 80+ users} via Flask deployment.
+  \end{itemize}
+\end{itemize}
+
+%-----------------------------------------------------------
+\resheading{CERTIFICATIONS}
+\vspace{0.4em}
+\begin{itemize}
+  \item \textbf{Data Science with AI} — Veloxivision Edu Tech \hfill Oct 2022–Oct 2023
+  \begin{itemize}
+    \item Covered end-to-end ML pipelines, MLOps, and NLP (BERT, Transformers) with 90\%+ accuracy in capstone projects.
+  \end{itemize}
+\end{itemize}
+
+%-----------------------------------------------------------
+\resheading{TECHNICAL SKILLS}
+\vspace{0.4em}
+\begin{itemize}
+  \item \textbf{Languages:} Python, SQL, JavaScript
+  \item \textbf{Frameworks \& Tools:} FastAPI, Next.js, Flask, TensorFlow, PyTorch, LangChain, Docker, Git, AWS
+  \item \textbf{Libraries \& Databases:} Pandas, NumPy, SciPy, OpenCV, MySQL, PostgreSQL, FAISS
+  \item \textbf{AI \& ML:} NLP, Deep Learning, Computer Vision, LLM Integration, Voice AI
+\end{itemize}
+
+\end{document}

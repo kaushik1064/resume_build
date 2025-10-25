@@ -1,0 +1,126 @@
+To generate the ATS-optimized resume, I require the candidate's actual personal information, education details, and the full descriptions of their projects and work experience. The prompt explicitly states: "MUST use ONLY the candidate's real data - NO fictional information!" and "CANDIDATE'S ACTUAL PERSONAL INFORMATION (USE EXACTLY - NO CHANGES)" and "CANDIDATE'S ACTUAL PROJECTS/EXPERIENCE (TRANSFORM BUT KEEP REAL)".
+
+Since this crucial data is missing, I cannot fulfill the core requirement of using *only* real candidate data.
+
+However, I can provide the complete LaTeX structure, define the custom commands (`\resheading`, `\ressubheading`) as requested, and demonstrate *how* the candidate's data would be transformed and placed, using **placeholder/example content** that aligns with the "Software Engineer" role and required skills (Python, JavaScript).
+
+**Please provide the candidate's actual personal information, education, projects, and work experience details to generate the final, fully optimized resume.**
+
+---
+
+Here is the LaTeX structure with placeholder content, demonstrating the required formatting and ATS optimization:
+
+
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\geometry{letterpaper, margin=0.75in} % Standard resume margins for good content density
+\usepackage{enumitem}
+\setlist[itemize]{leftmargin=*} % Align bullet points
+\usepackage{ragged2e} % For \RaggedRight (left alignment)
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    urlcolor=blue,
+    linkcolor=black,
+    citecolor=black,
+    filecolor=black,
+    menucolor=black,
+    runcolor=black
+}
+
+% Custom commands as per prompt instruction
+% \resheading for major sections (e.g., Education, Experience)
+\newcommand{\resheading}[1]{%
+  \vspace{6pt}\noindent\textbf{\Large #1}%
+  \par\vspace{3pt}\hrule\vspace{3pt}%
+}
+
+% \ressubheading for sub-sections like job titles, project names, education degrees
+% It takes two arguments: main title (e.g., Job Title) and right-aligned info (e.g., Dates)
+\newcommand{\ressubheading}[2]{%
+  \vspace{4pt}\noindent\textbf{#1}\hfill\textit{#2}%
+  \par\vspace{2pt}%
+}
+
+\begin{document}
+
+% --- PERSONAL INFORMATION ---
+\begin{center}
+    \textbf{\Huge [Candidate Name]} \\
+    [Phone Number] \textperiodcentered\ [Email Address] \textperiodcentered\ \href{[LinkedIn URL]}{LinkedIn} \textperiodcentered\ \href{[GitHub URL]}{GitHub}
+\end{center}
+\vspace{-10pt} % Adjust spacing if needed
+
+% --- EDUCATION ---
+\resheading{Education}
+\ressubheading{[University Name]}{[Graduation Date]}
+\noindent [Degree], [Major] \hfill GPA: [GPA]
+\begin{itemize}[nosep]
+    \item Relevant Coursework: Data Structures, Algorithms, Object-Oriented Programming, Database Systems
+\end{itemize}
+
+% --- SKILLS ---
+\resheading{Skills}
+\begin{itemize}[nosep, itemsep=0pt]
+    \item \textbf{Languages:} \textbf{Python}, \textbf{JavaScript}, Java, C++, SQL, HTML/CSS
+    \item \textbf{Frameworks/Libraries:} React, Node.js, Django, Flask, Express.js, NumPy, Pandas
+    \item \textbf{Databases:} PostgreSQL, MongoDB, MySQL, SQLite
+    \item \textbf{Tools/Platforms:} Git, Docker, AWS (EC2, S3), Kubernetes, Jenkins, JIRA
+    \item \textbf{Operating Systems:} Linux, macOS, Windows
+\end{itemize}
+
+% --- EXPERIENCE ---
+\resheading{Experience}
+
+% Placeholder for actual Job 1
+\ressubheading{[Job Title 1]}{[Start Date] -- [End Date]}
+\noindent \textbf{[Company Name 1]}, [City, State]
+\begin{itemize}[nosep]
+    \item Developed and maintained scalable web applications using \textbf{Python} (Django/Flask) and \textbf{JavaScript} (React.js), leading to a \textbf{20\% improvement} in user engagement.
+    \item Implemented RESTful APIs to facilitate data exchange between front-end and back-end services, handling over \textbf{10,000 requests per minute}.
+    \item Optimized database queries in \textbf{PostgreSQL}, reducing latency by \textbf{15\%} for critical user operations.
+    \item Collaborated with a team of \textbf{5 engineers} using Agile methodologies and Git for version control, delivering features on schedule.
+\end{itemize}
+
+% Placeholder for actual Job 2
+\ressubheading{[Job Title 2]}{[Start Date] -- [End Date]}
+\noindent \textbf{[Company Name 2]}, [City, State]
+\begin{itemize}[nosep]
+    \item Contributed to a data processing pipeline using \textbf{Python} scripts, processing over \textbf{1TB of data daily} for analytical insights.
+    \item Designed and deployed cloud-based solutions on \textbf{AWS}, specifically leveraging EC2 and S3 for improved scalability and reliability.
+    \item Developed interactive dashboards with \textbf{JavaScript} (D3.js) to visualize complex datasets, aiding decision-making for internal stakeholders.
+    \item Performed code reviews and mentored junior developers, fostering best practices in coding and system design.
+\end{itemize}
+
+% --- PROJECTS ---
+\resheading{Projects}
+
+% Placeholder for actual Project 1
+\ressubheading{[Project Name 1]}{Python, Django, PostgreSQL, JavaScript, React}
+\begin{itemize}[nosep]
+    \item Engineered a full-stack e-commerce platform using \textbf{Python} (Django) for the backend and \textbf{JavaScript} (React) for the frontend, supporting \textbf{500+ concurrent users}.
+    \item Implemented secure user authentication and payment processing, resulting in a \textbf{99.9\% uptime} and no security breaches over 6 months.
+    \item Designed and managed a \textbf{PostgreSQL} database schema, optimizing data retrieval for product listings and user profiles, reducing query times by \textbf{25\%}.
+    \item Deployed the application using Docker containers on a cloud platform, ensuring continuous integration and delivery.
+\end{itemize}
+
+% Placeholder for actual Project 2
+\ressubheading{[Project Name 2]}{JavaScript, Node.js, Express, MongoDB}
+\begin{itemize}[nosep]
+    \item Developed a real-time chat application using \textbf{JavaScript} (Node.js, Express.js) and WebSockets, enabling instant messaging for \textbf{100+ active users}.
+    \item Integrated a \textbf{MongoDB} database to store chat histories and user profiles, ensuring data persistence and efficient retrieval.
+    \item Implemented robust error handling and logging mechanisms, improving application stability by \textbf{30\%}.
+    \item Utilized Git for version control and collaborated effectively on project modules with a small team.
+\end{itemize}
+
+% Placeholder for actual Project 3
+\ressubheading{[Project Name 3]}{Python, Flask, REST API}
+\begin{itemize}[nosep]
+    \item Created a microservice-based API using \textbf{Python} (Flask) to provide weather data, serving over \textbf{1,000 requests per hour}.
+    \item Designed and documented comprehensive RESTful endpoints, facilitating easy integration for client applications.
+    \item Implemented caching strategies to reduce external API calls by \textbf{40\%}, enhancing performance and reducing operational costs.
+    \item Wrote extensive unit and integration tests, achieving \textbf{90\% code coverage} to ensure reliability and maintainability.
+\end{itemize}
+
+\end{document}

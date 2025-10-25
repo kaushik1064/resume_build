@@ -1,0 +1,80 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=0.75in]{geometry}
+\usepackage{hyperref}
+\usepackage{xcolor}
+
+% Remove page numbers
+\pagestyle{empty}
+
+\begin{document}
+
+% Contact Information
+\section*{Contact Information}
+Name: John Doe \\
+Email: john.doe@example.com \\
+Phone: +1 (555) 123-4567 \\
+LinkedIn: \href{https://www.linkedin.com/in/johndoeaiinfra}{linkedin.com/in/johndoeaiinfra} \\
+GitHub: \href{https://github.com/johndoe-ai}{github.com/johndoe-ai} \\
+Location: San Jose, CA
+
+% Education
+\section*{Education}
+\textbf{Master of Science} in Computer Science \hfill 2012 \\
+Stanford University \hfill Stanford, CA \\
+GPA: 3.9/4.0
+
+\textbf{Bachelor of Engineering} in Computer Engineering \hfill 2010 \\
+University of California, Berkeley \hfill Berkeley, CA \\
+GPA: 3.8/4.0
+
+% Experience
+\section*{Professional Experience}
+\textbf{Lead AI Infrastructure Engineer} \hfill Jan 2019 – Present \\
+Tech Innovations Inc. \hfill San Francisco, CA
+\begin{itemize}
+    \item Spearheaded the design and implementation of \textbf{next-generation AI infrastructure} for high-performance machine learning workloads, utilizing \textbf{C\texttt{++}} and \textbf{Golang} for core components.
+    \item Developed and optimized \textbf{Kubernetes Operators} and \textbf{Custom Resource Definitions (CRDs)} to automate the deployment and lifecycle management of \textbf{AI infrastructure} on large-scale \textbf{Kubernetes clusters}, improving deployment efficiency by \textbf{40\%}.
+    \item Engineered \textbf{eBPF}-based \textbf{telemetry collection systems} for \textbf{Linux} nodes and \textbf{Nvidia GPUs}, providing real-time performance insights and reducing monitoring overhead by \textbf{15\%} across \textbf{1000+ GPU-enabled servers}.
+    \item Implemented advanced \textbf{GPU programming} and \textbf{memory management} strategies for \textbf{CUDA kernels} using \textbf{Nvidia MIG} and \textbf{Nvidia MPS} concepts, achieving \textbf{30\%} throughput increase for critical \textbf{AI workloads}.
+\end{itemize}
+
+\textbf{Senior Systems Software Engineer} \hfill Aug 2012 – Dec 2018 \\
+Global Cloud Solutions \hfill Seattle, WA
+\begin{itemize}
+    \item Designed and developed \textbf{distributed system fundamentals} for a cloud-native platform using \textbf{C\texttt{++}} and \textbf{Python}, ensuring \textbf{scalability}, \textbf{resilience}, and \textbf{reliability} for critical services.
+    \item Optimized data transfer paths by integrating \textbf{RDMA} and \textbf{UCX} for high-speed communication between compute nodes, resulting in a \textbf{20\%} reduction in inter-node latency for data-intensive applications.
+    \item Contributed to \textbf{Linux kernel development} and wrote \textbf{device drivers} for custom hardware accelerators, enhancing system performance and enabling new capabilities for virtualized environments.
+    \item Managed \textbf{Linux user space development}, including robust \textbf{software packaging}, \textbf{system logging}, and \textbf{lifecycle management of processes} for core infrastructure components, improving system stability by \textbf{25\%}.
+\end{itemize}
+
+% Projects
+\section*{Projects}
+\textbf{AI GPU Orchestration Framework} \hfill 2023 \\
+Developed an open-source framework for dynamic GPU resource allocation in AI clusters.
+\begin{itemize}
+    \item Designed and implemented a \textbf{Kubernetes Operator} in \textbf{Golang} to manage \textbf{Nvidia MIG} and \textbf{Nvidia MPS} configurations dynamically, improving GPU utilization by \textbf{35\%} for mixed \textbf{AI workloads}.
+    \item Integrated with \textbf{Nvidia GPU operators} and \textbf{Nvidia container toolkit} to provide seamless GPU access and optimized runtime for \textbf{Docker}-based \textbf{AI/ML} containers.
+    \item Utilized \textbf{CUPTI} and \textbf{Nsight} for detailed \textbf{performance analysis} and \textbf{optimization} of \textbf{CUDA kernels}, reducing execution time by \textbf{18\%} on various deep learning models.
+\end{itemize}
+
+\textbf{High-Performance Network Fabric for AI} \hfill 2021 \\
+Engineered a low-latency, high-throughput network fabric for AI training clusters.
+\begin{itemize}
+    \item Developed a custom \textbf{Linux kernel module} and \textbf{device driver} in \textbf{C} to enable direct memory access for \textbf{RDMA} over Ethernet, achieving \textbf{95Gbps} throughput.
+    \item Integrated \textbf{UCX} to abstract communication protocols, providing a unified interface for \textbf{GPU-to-GPU} and \textbf{CPU-to-GPU} data transfers, crucial for distributed \textbf{Artificial Intelligence} training.
+    \item Conducted extensive \textbf{performance benchmarking} and \textbf{optimization} using custom tools, demonstrating \textbf{2x} speedup for collective communication operations compared to standard TCP/IP.
+\end{itemize}
+
+% Skills
+\section*{Technical Skills}
+\textbf{Programming Languages:} \textbf{C/C\texttt{++}}, \textbf{Golang}, \textbf{Python} \\
+\textbf{AI/ML Infrastructure:} \textbf{Artificial Intelligence (AI)}, \textbf{Machine Learning (ML)}, \textbf{GPU Programming}, \textbf{CUDA} (kernels, general), \textbf{UCX}, \textbf{RDMA}, \textbf{Nvidia GPU operators}, \textbf{Nvidia container toolkit}, \textbf{Nsight}, \textbf{CUPTI}, \textbf{Nvidia MIG} concepts, \textbf{Nvidia MPS} concepts, \textbf{AI Workloads}, \textbf{Next-Generation AI} \\
+\textbf{Operating Systems \& Kernel:} \textbf{Linux} (user space, kernel-level components), \textbf{Linux kernel development/expertise}, \textbf{Device driver development/expertise}, \textbf{Linux user space development}, \textbf{eBPF} \\
+\textbf{Containerization \& Orchestration:} \textbf{Kubernetes (K8s)}, \textbf{Docker}, \textbf{Custom Resource Definitions (CRDs)}, \textbf{Kubernetes Operators} \\
+\textbf{Distributed Systems \& Networking:} \textbf{Distributed system fundamentals}, \textbf{High-speed data transfer technologies} \\
+\textbf{Performance \& Optimization:} \textbf{Performance benchmarking}, \textbf{Performance analysis}, \textbf{Performance optimization} (AI infrastructure, CUDA kernels, memory management for GPUs), \textbf{Memory management} (for GPUs), \textbf{Efficiency}, \textbf{High-Performance} \\
+\textbf{System Operations \& Management:} \textbf{Software packaging}, \textbf{System logging}, \textbf{System telemetry}, \textbf{Lifecycle management of processes}, \textbf{Telemetry collection systems}, \textbf{Software component configuration (config)}, \textbf{Software upgrade architecture} (seamless, to minimize downtime), \textbf{Software installation}, \textbf{Software deployment} (AI infrastructure on Kubernetes clusters), \textbf{System-level issues} (debugging, problem-solving), \textbf{Reliability}, \textbf{Scalability}, \textbf{Resilience} \\
+\textbf{Tools \& Methodologies:} \textbf{Problem-solving}, \textbf{Debugging}, \textbf{Collaboration}, \textbf{Innovation}, \textbf{Agility}, Fast-paced environments, Experimentation-rich environments
+
+\end{document}
