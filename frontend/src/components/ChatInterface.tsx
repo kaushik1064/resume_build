@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { Send, Download, FileText, AlertCircle } from 'lucide-react';
+import { Send, Download, AlertCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { ChatMessage } from './ChatMessage';
 import { FileUploadStep } from './FileUploadStep';
 import { URLInputStep } from './URLInputStep';
+import { ResumeIcon } from './ResumeIcon';
 import { resumeAPI } from '../services/api';
 
 type Message = {
@@ -474,9 +475,7 @@ export function ChatInterface() {
         <div className="relative backdrop-blur-xl bg-white/[0.02] border-b border-white/30 p-6">
           <div className="absolute inset-0 bg-gradient-to-b from-white/20 via-transparent to-transparent pointer-events-none" style={{ height: '60%' }} />
           <div className="flex items-center gap-3 relative z-10">
-            <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center shadow-lg">
-              <FileText className="w-6 h-6 text-white" />
-            </div>
+            <ResumeIcon size={48} className="shadow-lg" />
             <div>
               <h1 className="text-gray-900">Resume Assistant</h1>
               <p className="text-sm text-gray-800">AI-powered resume creator</p>

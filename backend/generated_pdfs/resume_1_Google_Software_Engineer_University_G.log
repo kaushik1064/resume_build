@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.10.16)  25 OCT 2025 19:38
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (MiKTeX 25.4) (preloaded format=pdflatex 2025.10.16)  25 OCT 2025 20:15
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -361,58 +361,32 @@ Package hyperref Info: Link coloring ON on input line 52.
 \@outlinefile=\write3
 \openout3 = `resume_1_Google_Software_Engineer_University_G.out'.
 
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <7> on input line 57.
-LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 57.
 
-Underfull \hbox (badness 2495) in paragraph at lines 70--70
-[]\T1/ppl/m/n/10 Northeastern Uni-ver-
+Underfull \hbox (badness 10000) in paragraph at lines 56--60
+
  []
 
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <7> on input line 62.
+LaTeX Font Info:    External font `cmex10' loaded for size
+(Font)              <5> on input line 62.
 LaTeX Font Info:    Trying to load font information for TS1+ppl on input line 7
-9.
+8.
 (C:\Users\KAUSHIK\AppData\Local\Programs\MiKTeX\tex/latex/psnfss\ts1ppl.fd
 File: ts1ppl.fd 2001/06/04 font definitions for TS1/ppl.
-)
-Overfull \hbox (6.60672pt too wide) in paragraph at lines 123--124
-[]\T1/ppl/b/n/10 Frameworks & Li-braries: \T1/ppl/m/n/10 Re-act.js, Node.js, Ne
-xt.js, Flask, Ex-press.js, Ten-sor-Flow, Py-Torch, Tail-wind, Web3.js,
- []
+))
+! Emergency stop.
+<*> ...1_Google_Software_Engineer_University_G.tex
+                                                  
+*** (job aborted, no legal \end found)
 
-
-
-[1
-
-{C:/Users/KAUSHIK/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/KA
-USHIK/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/base/8r.enc}]
-
-[2] (resume_1_Google_Software_Engineer_University_G.aux)
- ***********
-LaTeX2e <2025-06-01> patch level 1
-L3 programming layer <2025-09-02>
- ***********
-Package rerunfilecheck Info: File `resume_1_Google_Software_Engineer_University
-_G.out' has not changed.
-(rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
- ) 
+ 
 Here is how much of TeX's memory you used:
- 9758 strings out of 468081
- 152486 string characters out of 5424820
- 586905 words of memory out of 5000000
- 38324 multiletter control sequences out of 15000+600000
- 632883 words of font info for 48 fonts, out of 8000000 for 9000
+ 9741 strings out of 468081
+ 152131 string characters out of 5424820
+ 571905 words of memory out of 5000000
+ 38318 multiletter control sequences out of 15000+600000
+ 630702 words of font info for 44 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,8n,79p,323b,510s stack positions out of 10000i,1000n,20000p,200000b,200000s
-<C:/Users/KAUSHIK/AppData/Local/Programs/MiKTeX/fonts/type1/public/amsfonts/c
-m/cmsy10.pfb><C:/Users/KAUSHIK/AppData/Local/Programs/MiKTeX/fonts/type1/urw/pa
-latino/uplb8a.pfb><C:/Users/KAUSHIK/AppData/Local/Programs/MiKTeX/fonts/type1/u
-rw/palatino/uplr8a.pfb><C:/Users/KAUSHIK/AppData/Local/Programs/MiKTeX/fonts/ty
-pe1/urw/palatino/uplri8a.pfb>
-Output written on resume_1_Google_Software_Engineer_University_G.pdf (2 pages, 
-76215 bytes).
-PDF statistics:
- 36 PDF objects out of 1000 (max. 8388607)
- 3 named destinations out of 1000 (max. 500000)
- 1 words of extra memory for PDF output out of 10000 (max. 10000000)
-
+ 75i,8n,79p,397b,384s stack positions out of 10000i,1000n,20000p,200000b,200000s
+!  ==> Fatal error occurred, no output PDF file produced!
