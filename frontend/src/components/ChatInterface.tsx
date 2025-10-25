@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Send, Download, FileText, AlertCircle } from 'lucide-react';
 import { Button } from './ui/button';
 import { ChatMessage } from './ChatMessage';
@@ -79,20 +79,29 @@ export function ChatInterface() {
     
     // Handle initial conversation start
     if (step === 'initial') {
-      setTimeout(() => {
-        addMessage(
-          "Great! Let's start by getting your current resume. You can either upload a file (PDF, DOC, DOCX) or paste your resume text using the options below.",
-          'bot'
-        );
-        setStep('awaiting_resume');
-      }, 500);
+      if (['yes', 'start', 'create', 'sure', 'begin', 'ready'].some(word => userMessage.toLowerCase().includes(word))) {
+        setTimeout(() => {
+          addMessage(
+            "Great! Let's begin creating your resume. First, I need your existing resume or details. You can upload a PDF file or paste your resume text using the options below.",
+            'bot'
+          );
+          setStep('awaiting_resume');
+        }, 500);
+      } else {
+        setTimeout(() => {
+          addMessage(
+            "No problem! Whenever you're ready to create your resume, just say 'yes' or 'start' and I'll help you build a professional resume.",
+            'bot'
+          );
+        }, 500);
+      }
       return;
     }
     
     // Special handling for missing sections step - this triggers resume generation
     if (step === 'awaiting_missing_sections') {
       setResumeData(prev => ({ ...prev, missingSections: userMessage }));
-      addMessage("Perfect! I've noted that you want to add: " + userMessage + ". I'm now generating your resume. This will take just a moment...", 'bot');
+      addMessage("Perfect! I've noted your preferences: " + userMessage + ". I'm now generating your tailored resume. This will take just a moment...", 'bot');
       setStep('generating');
       
       // Trigger resume generation
@@ -146,7 +155,7 @@ export function ChatInterface() {
         
         setTimeout(() => {
           addMessage(
-            "Excellent! I've received your resume. Now, please provide any relevant URLs you'd like to include (LinkedIn, portfolio, GitHub, etc.). You can add them using the fields below.",
+            "Excellent! I've received your resume. Now, please provide any job description URLs you'd like me to analyze for tailoring your resume. You can add multiple URLs using the fields below.",
             'bot'
           );
           setStep('awaiting_urls');
@@ -177,11 +186,41 @@ export function ChatInterface() {
         }));
         addMessage(`Added ${urls.length} URL(s)`, 'user');
         
-        setTimeout(() => {
-          addMessage(
-            "Great! Are there any specific sections you'd like me to add or emphasize in your resume? (e.g., certifications, projects, skills, etc.) Type your response below.",
-            'bot'
-          );
+        setTimeout(async () => {
+          try {
+            // Analyze resume sections
+            const sectionAnalysis = await resumeAPI.analyzeResumeSections(resumeData.fileText || '');
+            
+            if (sectionAnalysis.success) {
+              const { missing_sections, enhancement_suggestions } = sectionAnalysis.data;
+              
+              let message = "Perfect! I've analyzed your resume and the job descriptions. ";
+                          
+              if (missing_sections.length > 0) {
+                message += `I found some missing sections: ${missing_sections.join(', ')}. Would you like me to add these sections? `;
+              }
+              
+              if (enhancement_suggestions.length > 0) {
+                message += `Also, I can enhance your existing sections: ${enhancement_suggestions.join(', ')}. `;
+              }
+              
+              message += "Please let me know what you'd like me to do.";
+              
+              addMessage(message, 'bot');
+            } else {
+              addMessage(
+                "Perfect! I've analyzed the job descriptions. Are there any specific sections you'd like me to add or enhance in your resume? Type your response below.",
+                'bot'
+              );
+            }
+          } catch (error) {
+            console.error('Section analysis failed:', error);
+            addMessage(
+              "Perfect! I've analyzed the job descriptions. Are there any specific sections you'd like me to add or enhance in your resume? Type your response below.",
+              'bot'
+            );
+          }
+          
           setStep('awaiting_missing_sections');
         }, 500);
       } else {
@@ -212,18 +251,130 @@ export function ChatInterface() {
     try {
       // First, extract personal data and projects data
       console.log('📝 Extracting personal data...');
-      const personalDataResponse = await resumeAPI.sendChatMessage(
-        resumeData.fileText || '', 
-        'extract_personal'
-      );
+      const personalDataResponse = await resumeAPI.extractPersonalData(resumeData.fileText || '');
       console.log('✅ Personal data extracted:', personalDataResponse);
       
       console.log('📝 Extracting projects data...');
-      const projectsDataResponse = await resumeAPI.sendChatMessage(
-        resumeData.fileText || '', 
-        'extract_projects'
-      );
+      const projectsDataResponse = await resumeAPI.extractProjectsData(resumeData.fileText || '');
       console.log('✅ Projects data extracted:', projectsDataResponse);
+
+      // Get the actual template from backend
+      let templateContent = '';
+      try {
+        const templateResponse = await resumeAPI.getTemplate();
+        templateContent = templateResponse.success ? templateResponse.data.template : '';
+      } catch (error) {
+        console.warn('Failed to get template from backend, using fallback');
+        // Fallback template
+        templateContent = `\\documentclass[a4paper,10pt]{article}
+%-----------------------------------------------------------
+\\usepackage[top=0.75in, bottom=0.75in, left=0.55in, right=0.85in]{geometry}
+\\usepackage{graphicx}
+\\usepackage{url}
+\\usepackage{palatino}
+\\usepackage{booktabs}
+\\usepackage{hyperref}
+\\usepackage{xcolor}
+\\usepackage[T1]{fontenc}
+\\usepackage[utf8]{inputenc}
+\\usepackage{color}
+
+\\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Resume},
+    pdfpagemode=FullScreen,
+}
+
+\\definecolor{mygrey}{gray}{0.75}
+\\textheight=9.8in
+\\raggedbottom
+\\setlength{\\tabcolsep}{0in}
+\\newcommand{\\isep}{-2 pt}
+\\newcommand{\\lsep}{-0.5cm}
+\\newcommand{\\psep}{-0.6cm}
+\\renewcommand{\\labelitemii}{$\\circ$}
+
+\\pagestyle{empty}
+%-----------------------------------------------------------
+% Custom commands
+\\newcommand{\\resheading}[1]{%
+  \\vspace{1em}%
+  \\noindent\\colorbox{mygrey}{%
+    \\parbox{\\dimexpr\\linewidth-2\\fboxsep\\relax}{%
+      \\textbf{#1}%
+    }%
+  }%
+  \\vspace{0.6em}%
+}
+
+\\newcommand{\\ressubheading}[3]{%
+\\begin{tabular*}{\\textwidth}{l @{\\extracolsep{\\fill}} r}
+    \\textsc{\\textbf{#1}} & \\textsc{\\textit{[#2]}} \\\\
+\\end{tabular*}\\vspace{-4pt}
+}
+
+%-----------------------------------------------------------
+\\begin{document}
+
+% Header Section
+\\vspace*{-1.5cm}
+\\noindent
+
+\\textbf{[FULL NAME]} \\hspace{9.6cm} {\\bf [EMAIL]}\\\\
+\\indent {\\bf [JOB TITLE]}  \\hspace{10.3cm} {\\bf [PHONE]} \\\\
+\\indent {\\bf [LOCATION]}  \\hspace{7.9cm} {\\bf [LINKEDIN]} \\\\
+\\indent {\\bf [GITHUB]} \\\\
+
+%-----------------------------------------------------------
+\\resheading{EDUCATION}
+\\vspace{0.4em}
+\\begin{tabular}{ p{2.5cm} @{\\hskip 0.15in} p{5.5cm} @{\\hskip 0.15in} p{3.5cm} @{\\hskip 0.15in} p{2.5cm} @{\\hskip 0.15in} p{1.5cm} }
+\\toprule
+\\textbf{Degree} & \\textbf{Specialization} & \\textbf{Institute} & \\textbf{Year} & \\textbf{CPI} \\\\
+\\midrule
+[DEGREE] & \\textit{[MAJOR]} & [INSTITUTION] & [YEAR] & [GPA] \\\\
+\\bottomrule
+\\end{tabular}
+
+%-----------------------------------------------------------
+\\resheading{WORK EXPERIENCE}
+\\vspace{0.4em}
+\\begin{itemize}
+  \\item \\textbf{[JOB TITLE]} — \\textit{[COMPANY]} \\hfill [DURATION]
+  \\begin{itemize}
+    \\item [ACHIEVEMENT 1 with metrics and technologies]
+    \\item [ACHIEVEMENT 2 with impact]
+    \\item [ACHIEVEMENT 3 highlighting relevant skills]
+  \\end{itemize}
+\\end{itemize}
+
+%-----------------------------------------------------------
+\\resheading{PROJECTS}
+\\vspace{0.4em}
+\\begin{itemize}
+  \\item \\textbf{[PROJECT NAME]} \\hfill [DATE]
+  \\begin{itemize}
+    \\item [Project description with technologies and impact]
+    \\item [Key features and accomplishments]
+    \\item [Outcome and results achieved]
+  \\end{itemize}
+\\end{itemize}
+
+%-----------------------------------------------------------
+\\resheading{TECHNICAL SKILLS}
+\\vspace{0.4em}
+\\begin{itemize}
+  \\item \\textbf{Languages:} [Programming languages]
+  \\item \\textbf{Frameworks \\& Tools:} [Frameworks and tools]
+  \\item \\textbf{Libraries \\& Databases:} [Libraries and databases]
+  \\item \\textbf{Technologies:} [Other technologies]
+\\end{itemize}
+
+\\end{document}`;
+      }
 
       // Prepare data for resume generation
       const generationData = {
@@ -233,87 +384,7 @@ export function ChatInterface() {
           add_sections: resumeData.missingSections ? ['skills', 'projects', 'experience'] : [],
           skip_sections: []
         },
-        templateContent: `% Professional Resume Template
-\\documentclass[11pt,a4paper,sans]{article}
-\\usepackage[utf8]{inputenc}
-\\usepackage[margin=0.75in]{geometry}
-\\usepackage{titlesec}
-\\usepackage{enumitem}
-\\usepackage{hyperref}
-\\usepackage{xcolor}
-
-% Custom section formatting
-\\titleformat{\\section}{\\large\\scshape\\raggedright}{}{0em}{}[\\color{black}\\titlerule]
-\\titleformat{\\subsection}{\\normalsize\\scshape\\raggedright}{}{0em}{}
-
-% Remove page numbers
-\\pagestyle{empty}
-
-\\begin{document}
-
-% Contact Information
-\\section*{Contact Information}
-Name: [Your Name] \\\\
-Email: [your.email@example.com] \\\\
-Phone: [Your Phone Number] \\\\
-LinkedIn: [Your LinkedIn URL] \\\\
-GitHub: [Your GitHub URL] \\\\
-Location: [Your Location]
-
-% Education
-\\section*{Education}
-\\textbf{[Degree]} in [Major] \\hfill [Year] \\\\
-[University Name] \\hfill [Location] \\\\
-GPA: [GPA if mentioned]
-
-% Experience
-\\section*{Professional Experience}
-\\textbf{[Job Title]} \\hfill [Start Date - End Date] \\\\
-[Company Name] \\hfill [Location]
-\\begin{itemize}[leftmargin=*]
-    \\item [Achievement or responsibility with metrics]
-    \\item [Another achievement or responsibility]
-    \\item [Third achievement highlighting relevant skills]
-\\end{itemize}
-
-\\textbf{[Previous Job Title]} \\hfill [Start Date - End Date] \\\\
-[Previous Company Name] \\hfill [Location]
-\\begin{itemize}[leftmargin=*]
-    \\item [Achievement or responsibility]
-    \\item [Another achievement or responsibility]
-\\end{itemize}
-
-% Projects
-\\section*{Projects}
-\\textbf{[Project Name]} \\hfill [Date] \\\\
-[Brief description of the project and its impact]
-\\begin{itemize}[leftmargin=*]
-    \\item [Key feature or accomplishment with technologies used]
-    \\item [Another feature highlighting relevant skills]
-    \\item [Outcome or result achieved]
-\\end{itemize}
-
-\\textbf{[Another Project Name]} \\hfill [Date] \\\\
-[Brief description of the project]
-\\begin{itemize}[leftmargin=*]
-    \\item [Key feature or accomplishment]
-    \\item [Technologies and tools used]
-\\end{itemize}
-
-% Skills
-\\section*{Technical Skills}
-\\textbf{Programming Languages:} [List programming languages] \\\\
-\\textbf{Frameworks \\& Libraries:} [List frameworks and libraries] \\\\
-\\textbf{Tools \\& Technologies:} [List tools and technologies] \\\\
-\\textbf{Databases:} [List databases] \\\\
-\\textbf{Cloud Platforms:} [List cloud platforms]
-
-% Certifications (if applicable)
-\\section*{Certifications}
-\\textbf{[Certification Name]} \\hfill [Date] \\\\
-[Issuing Organization]
-
-\\end{document}`,
+        templateContent: templateContent,
         personalData: personalDataResponse.success ? personalDataResponse.data : {},
         projectsData: projectsDataResponse.success ? projectsDataResponse.data : {}
       };

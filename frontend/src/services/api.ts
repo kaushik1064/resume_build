@@ -157,6 +157,68 @@ class ResumeAPIService {
       throw new Error('Failed to list resumes');
     }
   }
+
+  // Extract personal data from resume text
+  async extractPersonalData(resumeText: string) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/extract/personal`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ resumeText }),
+      });
+      return await response.json();
+    } catch (error) {
+      console.error('Personal data extraction failed:', error);
+      throw new Error('Failed to extract personal data');
+    }
+  }
+
+  // Extract projects data from resume text
+  async extractProjectsData(resumeText: string) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/extract/projects`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ resumeText }),
+      });
+      return await response.json();
+    } catch (error) {
+      console.error('Projects data extraction failed:', error);
+      throw new Error('Failed to extract projects data');
+    }
+  }
+
+  // Get template content
+  async getTemplate() {
+    try {
+      const response = await fetch(`${API_BASE_URL}/template`);
+      return await response.json();
+    } catch (error) {
+      console.error('Template fetch failed:', error);
+      throw new Error('Failed to get template');
+    }
+  }
+
+  // Analyze resume sections
+  async analyzeResumeSections(resumeText: string) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/analyze/sections`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ resumeText }),
+      });
+      return await response.json();
+    } catch (error) {
+      console.error('Section analysis failed:', error);
+      throw new Error('Failed to analyze resume sections');
+    }
+  }
 }
 
 export const resumeAPI = new ResumeAPIService();

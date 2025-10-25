@@ -191,25 +191,25 @@ RESUME TEXT:
 Provide structured extraction in this EXACT format:
 
 ## PERSONAL INFORMATION
-- Full Name: [Exact name from resume]
-- Phone: [Phone number]
-- Email: [Email address]
+- Full Name: [Exact name from resume - DO NOT CHANGE OR MODIFY]
+- Phone: [Phone number - EXACTLY as written]
+- Email: [Email address - EXACTLY as written]
 - LinkedIn: [LinkedIn URL if present, else "Not provided"]
 - GitHub: [GitHub URL if present, else "Not provided"]
 - Location: [City, State/Country if present, else "Not provided"]
 - Portfolio/Website: [If present, else "Not provided"]
 
 ## EDUCATION
-For EACH degree/education entry, extract:
+For EACH degree/education entry, extract EXACTLY as written:
 ### [Degree] in [Major/Field]
-- Institution: [University/College name]
-- Duration: [Start date - End date OR Expected graduation]
+- Institution: [University/College name - EXACTLY as written]
+- Duration: [Start date - End date OR Expected graduation - EXACTLY as written]
 - GPA: [If mentioned, else "Not provided"]
 - Relevant Coursework: [If mentioned]
 - Honors/Awards: [If mentioned]
 - Activities: [If mentioned]
 
-Be EXACT - copy names, emails, phone numbers, and institutions EXACTLY as written. Do not invent or modify any information."""
+CRITICAL: Copy names, emails, phone numbers, institutions, dates, and all details EXACTLY as they appear in the original resume. Do not invent, modify, or change ANY information. Preserve the original formatting and wording completely."""
 
         try:
             resp = self.gemini_model.generate_content(personal_extraction_prompt)
@@ -280,7 +280,7 @@ Be comprehensive - extract every detail."""
             return {"projects_and_experience": "", "raw_resume": resume_text}
 
     def validate_resume_sections(self, resume_text):
-        """Check which required sections are present in the resume."""
+        """Check which sections are present and missing in the resume."""
         resume_lower = resume_text.lower()
 
         required_sections = {
@@ -301,23 +301,29 @@ Be comprehensive - extract every detail."""
         present = {}
         missing_required = []
         missing_optional = []
+        existing_sections = []
 
         for section, keywords in required_sections.items():
             found = any(keyword in resume_lower for keyword in keywords)
             present[section] = found
-            if not found:
+            if found:
+                existing_sections.append(section)
+            else:
                 missing_required.append(section)
 
         for section, keywords in optional_sections.items():
             found = any(keyword in resume_lower for keyword in keywords)
             present[section] = found
-            if not found:
+            if found:
+                existing_sections.append(section)
+            else:
                 missing_optional.append(section)
 
         return {
             "present": present,
             "missing_required": missing_required,
-            "missing_optional": missing_optional
+            "missing_optional": missing_optional,
+            "existing_sections": existing_sections
         }
 
     async def scrape_job_description(self, url):
@@ -372,80 +378,31 @@ Be comprehensive - extract every detail."""
         job_title = jd_data.get('job_title', 'Unknown Role')
         company = jd_data.get('company', 'Unknown Company')
         all_jd_skills = jd_data.get('all_skills', [])
-        skills_list = "\n".join([f"- {skill}" for skill in all_jd_skills[:50]])
+        skills_list = "\n".join([f"- {skill}" for skill in all_jd_skills[:20]])  # Limit to 20 skills
 
-        prompt = f"""You are an expert ATS-optimized resume writer and LaTeX specialist.
+        prompt = f"""Transform this resume for {job_title} at {company}. 
 
-# CRITICAL MISSION
-Transform candidate's resume for: **{job_title}** at **{company}**
-Preserve personal details while optimizing for ATS and job requirements.
-
-# BASE LATEX TEMPLATE
-```latex
+TEMPLATE STRUCTURE (use exactly):
 {base_latex}
-```
 
-# TARGET: {job_title} at {company}
-
-# JOB DESCRIPTION ANALYSIS
-{jd_data.get('full_analysis', jd_data.get('raw_jd', ''))}
-
-# REQUIRED SKILLS (MUST INCLUDE ALL)
-{skills_list}
-
-# CANDIDATE'S ACTUAL PERSONAL INFORMATION (USE EXACTLY)
+PERSONAL INFO (use EXACTLY - never modify):
 {personal_data.get('personal_and_education', '')}
 
-# CANDIDATE'S PROJECTS/EXPERIENCE (TRANSFORM)
+EXISTING PROJECTS/EXPERIENCE (enhance bullet points only):
 {projects_data.get('projects_and_experience', '')}
 
-{section_instructions}
+JOB REQUIREMENTS:
+{skills_list}
 
-# CRITICAL INSTRUCTIONS
+INSTRUCTIONS:
+1. Use EXACT personal details (name, email, phone, education)
+2. Keep existing project/experience structure but enhance bullet points for JD match
+3. Add metrics and JD keywords to bullet points
+4. Use \\textbf{{}} for key terms
+5. Follow template structure exactly
+6. Return only LaTeX code
 
-## 0. PERSONAL DETAILS (HIGHEST PRIORITY)
-- Use EXACT name, phone, email, LinkedIn, GitHub from personal info
-- Use EXACT institution names, degrees, dates
-- DO NOT modify any personal/education details
-
-## 1. JOB ROLE ALIGNMENT
-- Highlight "{job_title}" competencies
-- Optimize for "{company}" culture/needs
-
-## 2. COMPLETE SKILL COVERAGE
-- Include EVERY skill from required skills list
-- Organize by categories in Skills section
-- Weave into project/experience bullets
-
-## 3. PROJECT TRANSFORMATION
-- Rename strategically for "{job_title}" relevance
-- Rewrite with JD keywords
-- Add metrics (%, numbers, scale)
-- Bold key terms with \\textbf{{}}
-- 3-4 bullets per project (2-3 lines each)
-
-## 4. EXPERIENCE TRANSFORMATION
-- 3-4 bullets per role (2-3 lines)
-- Action verbs + JD technologies + metrics
-- Bold technologies/metrics
-
-## 5. DYNAMIC METRICS
-Include at least one:
-- Percentages, scale, time savings, cost savings, performance, scope
-
-## 6. LATEX FORMATTING
-- Preserve template structure
-- Escape special chars
-- No markdown, no duplicate \\begin{{document}}
-- Tight spacing
-
-## 7. NO PROFESSIONAL SUMMARY
-Skip summary/objective - start with contact
-
-## OUTPUT
-Return ONLY valid LaTeX code, ready to compile.
-
-Generate optimized resume:"""
+Generate resume:"""
 
         try:
             resp = self.gemini_model.generate_content(
@@ -457,6 +414,12 @@ Generate optimized resume:"""
                     max_output_tokens=8192,
                 )
             )
+            
+            # Check if response is valid
+            if not resp or not resp.text:
+                logger.error(f"Gemini API returned empty response. Finish reason: {getattr(resp, 'finish_reason', 'unknown')}")
+                raise Exception("AI response was empty or blocked")
+                
             return resp.text.strip()
         except Exception as e:
             logger.error(f"Resume reconstruction failed: {e}")
@@ -950,6 +913,143 @@ def list_resumes():
         return jsonify({
             'success': False,
             'error': 'Failed to list resumes'
+        }), 500
+
+@app.route('/api/extract/personal', methods=['POST'])
+@limiter.limit("10 per minute")
+def extract_personal_data():
+    """Extract personal data from resume text"""
+    try:
+        data = request.get_json()
+        resume_text = data.get('resumeText', '')
+
+        if not resume_text or resume_text.strip() == '':
+            return jsonify({
+                'success': False,
+                'error': 'Resume text is required'
+            }), 400
+
+        # Extract personal data using the processor
+        personal_data = resume_processor.extract_candidate_personal_and_education(resume_text)
+
+        return jsonify({
+            'success': True,
+            'message': 'Personal data extracted successfully',
+            'data': personal_data
+        })
+
+    except Exception as e:
+        logger.error(f"Personal data extraction error: {e}")
+        return jsonify({
+            'success': False,
+            'error': 'Failed to extract personal data'
+        }), 500
+
+@app.route('/api/extract/projects', methods=['POST'])
+@limiter.limit("10 per minute")
+def extract_projects_data():
+    """Extract projects data from resume text"""
+    try:
+        data = request.get_json()
+        resume_text = data.get('resumeText', '')
+
+        if not resume_text or resume_text.strip() == '':
+            return jsonify({
+                'success': False,
+                'error': 'Resume text is required'
+            }), 400
+
+        # Extract projects data using the processor
+        projects_data = resume_processor.extract_candidate_projects_and_experience(resume_text)
+
+        return jsonify({
+            'success': True,
+            'message': 'Projects data extracted successfully',
+            'data': projects_data
+        })
+
+    except Exception as e:
+        logger.error(f"Projects data extraction error: {e}")
+        return jsonify({
+            'success': False,
+            'error': 'Failed to extract projects data'
+        }), 500
+
+@app.route('/api/template', methods=['GET'])
+def get_template():
+    """Get the default LaTeX template"""
+    try:
+        template_path = os.path.join(app.config['LATEX_TEMPLATE_DIR'], 'default_template.tex')
+        
+        if not os.path.exists(template_path):
+            return jsonify({
+                'success': False,
+                'error': 'Template file not found'
+            }), 404
+
+        with open(template_path, 'r', encoding='utf-8') as f:
+            template_content = f.read()
+
+        return jsonify({
+            'success': True,
+            'message': 'Template retrieved successfully',
+            'data': {
+                'template': template_content
+            }
+        })
+
+    except Exception as e:
+        logger.error(f"Template retrieval error: {e}")
+        return jsonify({
+            'success': False,
+            'error': 'Failed to retrieve template'
+        }), 500
+
+@app.route('/api/analyze/sections', methods=['POST'])
+@limiter.limit("10 per minute")
+def analyze_resume_sections():
+    """Analyze resume sections and provide enhancement suggestions"""
+    try:
+        data = request.get_json()
+        resume_text = data.get('resumeText', '')
+
+        if not resume_text or resume_text.strip() == '':
+            return jsonify({
+                'success': False,
+                'error': 'Resume text is required'
+            }), 400
+
+        # Analyze sections
+        section_analysis = resume_processor.validate_resume_sections(resume_text)
+        
+        # Create enhancement suggestions
+        missing_sections = section_analysis['missing_required'] + section_analysis['missing_optional']
+        existing_sections = section_analysis['existing_sections']
+        
+        enhancement_suggestions = []
+        if 'skills' in existing_sections:
+            enhancement_suggestions.append("Enhance skills section to better match job requirements")
+        if 'projects' in existing_sections:
+            enhancement_suggestions.append("Improve project descriptions with metrics and JD keywords")
+        if 'experience' in existing_sections:
+            enhancement_suggestions.append("Enhance work experience bullet points for better JD alignment")
+
+        return jsonify({
+            'success': True,
+            'message': 'Section analysis completed',
+            'data': {
+                'missing_sections': missing_sections,
+                'existing_sections': existing_sections,
+                'enhancement_suggestions': enhancement_suggestions,
+                'analysis': section_analysis
+            }
+        })
+
+    except Exception as e:
+        logger.error(f"Section analysis error: {e}")
+        return jsonify({
+            'success': False,
+            'error': 'Failed to analyze resume sections'
         }), 500
 
 if __name__ == '__main__':

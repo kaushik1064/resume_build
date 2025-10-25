@@ -1,87 +1,131 @@
-% Professional Resume Template
-\documentclass[11pt,a4paper,sans]{article}
-\usepackage[utf8]{inputenc}
-\usepackage[margin=0.75in]{geometry}
-\usepackage{titlesec}
-\usepackage{enumitem}
+\documentclass[a4paper,10pt]{article}
+%-----------------------------------------------------------
+\usepackage[top=0.75in, bottom=0.75in, left=0.55in, right=0.85in]{geometry}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{palatino}
+\usepackage{booktabs}
 \usepackage{hyperref}
 \usepackage{xcolor}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{color}
 
-% Custom section formatting
-\titleformat{\section}{\large\scshape\raggedright}{}{0em}{}[\color{black}\titlerule]
-\titleformat{\subsection}{\normalsize\scshape\raggedright}{}{0em}{}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Resume},
+    pdfpagemode=FullScreen,
+}
 
-% Remove page numbers
+\definecolor{mygrey}{gray}{0.75}
+\textheight=9.8in
+\raggedbottom
+\setlength{\tabcolsep}{0in}
+\newcommand{\isep}{-2 pt}
+\newcommand{\lsep}{-0.5cm}
+\newcommand{\psep}{-0.6cm}
+\renewcommand{\labelitemii}{$\circ$}
+
 \pagestyle{empty}
+%-----------------------------------------------------------
+% Custom commands
+\newcommand{\resheading}[1]{%
+  \vspace{1em}%
+  \noindent\colorbox{mygrey}{%
+    \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+      \textbf{#1}%
+    }%
+  }%
+  \vspace{0.6em}%
+}
 
+\newcommand{\ressubheading}[3]{%
+\begin{tabular*}{\textwidth}{l @{\extracolsep{\fill}} r}
+    \textsc{\textbf{#1}} & \textsc{\textit{[#2]}} \\
+\end{tabular*}\vspace{-4pt}
+}
+
+%-----------------------------------------------------------
 \begin{document}
 
-% Contact Information
-\section*{Contact Information}
-Name: Alex Chen \\
-Email: alex.chen@example.com \\
-Phone: (123) 456-7890 \\
-LinkedIn: \href{https://www.linkedin.com/in/alexchen}{linkedin.com/in/alexchen} \\
-GitHub: \href{https://github.com/alexchen-dev}{github.com/alexchen-dev} \\
-Location: Mountain View, CA
+% Header Section
+\vspace*{-1.5cm}
+\noindent
+\begin{tabular*}{\textwidth}{l @{\extracolsep{\fill}} r}
+    \textbf{ACHYUT KATIYAR} & \textbf{achyutkatiyar21@gmail.com} \\
+    \textbf{Software Engineer} & \textbf{+1 (857) 576 6733} \\
+    \textbf{github.com/achyut21} & \textbf{linkedin.com/in/achyutkatiyar2103} \\
+\end{tabular*}
 
-% Education
-\section*{Education}
-\textbf{Bachelor of Science} in Computer Science \hfill Expected May 2026 \\
-Stanford University \hfill Stanford, CA \\
-GPA: 3.9/4.0
+%-----------------------------------------------------------
+\resheading{EDUCATION}
+\vspace{0.4em}
+\begin{tabular}{ p{2.5cm} @{\hskip 0.15in} p{5.5cm} @{\hskip 0.15in} p{3.5cm} @{\hskip 0.15in} p{2.5cm} @{\hskip 0.15in} p{1.5cm} }
+\toprule
+\textbf{Degree} & \textbf{Specialization} & \textbf{Institute} & \textbf{Year} & \textbf{GPA} \\
+\midrule
+M.S. & \textit{Computer Science} & Northeastern University & Expected 2027 & - \\
+B.S. & \textit{Computer Science} & SRM University - AP & 2024 & 8.3/10.00 \\
+\bottomrule
+\end{tabular}
 
-% Experience
-\section*{Professional Experience}
-\textbf{Software Engineering Intern} \hfill Summer 2025 \\
-Tech Innovators Inc. \hfill Seattle, WA
-\begin{itemize}[leftmargin=*]
-    \item Developed and optimized core components for a \textbf{Distributed Systems} platform using \textbf{Java} and \textbf{Python}, enhancing data processing throughput by \textbf{25\%} for \textbf{large-scale applications}.
-    \item Implemented robust \textbf{Data Storage} solutions and \textbf{Networking} protocols over \textbf{TCP/IP} in a \textbf{Unix/Linux environment}, ensuring \textbf{scalability} and \textbf{security} for critical user data.
-    \item Collaborated closely with a cross-functional team, contributing to \textbf{Software Design}, \textbf{Software Testing}, and \textbf{Software Deployment} cycles, demonstrating strong \textbf{problem-solving} and \textbf{teamwork} skills.
+%-----------------------------------------------------------
+\resheading{WORK EXPERIENCE}
+\vspace{0.4em}
+\begin{itemize}
+  \item \textbf{Full Stack Web Developer} — \textit{SRM University - AP} \hfill Jan 2024–Jun 2024
+  \begin{itemize}
+    \item Designed and implemented a \textbf{distributed web portal} using \textbf{React.js} and \textbf{Next.js} for UROP and Capstone collaboration, featuring \textbf{role-based access control}, task tracking, and secure document sharing.
+    \item Enhanced \textbf{UI design} and user experience, improving grading efficiency by \textbf{75\%} and streamlining project monitoring processes by \textbf{50\%} for over 1000 students.
+  \end{itemize}
+
+  \item \textbf{Technical Intern} — \textit{SRM University - AP} \hfill Oct 2023–Jun 2024
+  \begin{itemize}
+    \item Directed technical operations for university events, developing event websites and integrating \textbf{payment gateways} to process thousands of transactions securely.
+    \item Coordinated cross-functional teams to deliver event technology solutions, resulting in a \textbf{75\% increase in user satisfaction} and \textbf{60\% improvement in process efficiency} across multiple \textbf{large-scale} events.
+  \end{itemize}
 \end{itemize}
 
-\textbf{Research Assistant (AI/ML Lab)} \hfill Fall 2024 -- Spring 2025 \\
-Stanford University \hfill Stanford, CA
-\begin{itemize}[leftmargin=*]
-    \item Conducted \textbf{research} and developed a novel algorithm for \textbf{Information Retrieval} using \textbf{Machine Learning (ML)} and \textbf{Natural Language Processing (NLP)} techniques in \textbf{Python}.
-    \item Optimized data access and processing for large datasets, achieving a \textbf{15\%} improvement in query response time and contributing to the lab's ongoing \textbf{Artificial Intelligence (AI)} initiatives.
-    \item Maintained and enhanced experimental code, demonstrating strong understanding of \textbf{Computer Science} principles and contributing to the \textbf{technology development} of new \textbf{search technologies}.
+%-----------------------------------------------------------
+\resheading{PROJECTS}
+\vspace{0.4em}
+\begin{itemize}
+  \item \textbf{Zenith} \hfill (Next.js, Tailwind CSS, Solidity, Polygon, IPFS)
+  \begin{itemize}
+    \item Developed \textbf{Zenith}, a \textbf{decentralized music application} on \textbf{Polygon} using \textbf{Next.js} and \textbf{Solidity}, enabling artists to mint and sell music as \textbf{NFTs}.
+    \item Implemented \textbf{multi-role access controls} and integrated \textbf{IPFS} for \textbf{secure data storage} and file sharing, eliminating intermediaries and reducing decision-making bottlenecks by \textbf{30\%}.
+    \item Designed interactive \textbf{UI/UX} for NFT gaming and community features, enhancing artist monetization and user engagement.
+  \end{itemize}
+
+  \item \textbf{PokeArena} \hfill (React.js, Node.js, Tailwind CSS, Three.js, web3, Move, Aptos)
+  \begin{itemize}
+    \item Engineered \textbf{PokeArena}, a \textbf{blockchain-based platform} digitizing \textbf{300+ Pokémon cards} as \textbf{NFTs} using \textbf{React.js}, \textbf{Node.js}, and \textbf{Aptos} blockchain for secure trading and battling.
+    \item Integrated \textbf{web3} and wallet authentication, processing \textbf{120+ NFT trades} with high transaction reliability and boosting user engagement by \textbf{60\%}.
+    \item Designed a retro-modern \textbf{UI/UX} with \textbf{Three.js} for an immersive user experience.
+  \end{itemize}
+
+  \item \textbf{Infinitus’24} \hfill (Next.js, Tailwind CSS, Node.js, Three.js)
+  \begin{itemize}
+    \item Led development of the \textbf{Infinitus’24 Fest website} using \textbf{Next.js} and \textbf{Node.js}, optimizing for high crowd load and handling \textbf{20,000+ student visits}.
+    \item Integrated a \textbf{payment gateway} to securely process \textbf{6,000+ registrations} for 10+ cultural and technical events, ensuring robust \textbf{networking} and \textbf{data storage}.
+    \item Utilized \textbf{Three.js} for dynamic visuals and \textbf{Tailwind CSS} for a responsive \textbf{UI design}.
+  \end{itemize}
 \end{itemize}
 
-% Projects
-\section*{Projects}
-\textbf{Distributed File System (DFS) with Replication} \hfill Spring 2024 \\
-\href{https://github.com/alexchen-dev/distributed-file-system}{GitHub Repository}
-\begin{itemize}[leftmargin=*]
-    \item Engineered a fault-tolerant \textbf{Distributed File System} in \textbf{C++} on a \textbf{Linux} cluster, implementing data replication for \textbf{100\%} availability and consistent data integrity across nodes.
-    \item Designed and implemented custom \textbf{TCP/IP networking} protocols and \textbf{Data Storage} mechanisms, showcasing expertise in \textbf{Large-scale System Design} and ensuring robust \textbf{security} features.
-    \item Achieved high \textbf{scalability} for data access and storage, reducing read/write latency by \textbf{30\%} through optimized data distribution and concurrent access patterns for \textbf{large-scale systems}.
+%-----------------------------------------------------------
+\resheading{TECHNICAL SKILLS}
+\vspace{0.4em}
+\begin{itemize}
+  \item \textbf{Languages:} C++, Java, Python, JavaScript, TypeScript, Solidity, SQL
+  \item \textbf{Frameworks \& Libraries:} React.js, Node.js, Next.js, Flask, Express.js, TensorFlow, PyTorch, Tailwind, Web3.js, Ethers.js, IPFS
+  \item \textbf{Databases:} MongoDB, Firebase
+  \item \textbf{Cloud \& DevOps:} AWS (EC2, S3, Lambda), GCP, Docker, Kubernetes, Jenkins, \textbf{Unix/Linux Environments}
+  \item \textbf{Blockchain \& Web3:} Solidity, Polygon, Ethereum, Aptos, Smart Contracts, \textbf{Distributed Systems}
+  \item \textbf{AI \& ML:} Machine Learning, Deep Learning, TensorFlow, PyTorch
+  \item \textbf{Other:} \textbf{Large-scale System Design}, \textbf{API Development}, \textbf{Networking} (\textbf{TCP/IP}), \textbf{Security}, \textbf{UI Design}
 \end{itemize}
-
-\textbf{AI-Powered Code Review Assistant} \hfill Fall 2023 \\
-\href{https://github.com/alexchen-dev/ai-code-reviewer}{GitHub Repository}
-\begin{itemize}[leftmargin=*]
-    \item Developed an \textbf{Artificial Intelligence (AI)}-driven tool using \textbf{Python} and \textbf{Machine Learning (ML)} to automate code review, leveraging \textbf{Natural Language Processing (NLP)} for semantic analysis.
-    \item Designed intuitive \textbf{UI Design} for user interaction, allowing developers to receive real-time feedback and improving code quality by identifying \textbf{85\%} of common code smells.
-    \item Implemented comprehensive \textbf{Software Testing} and continuous integration, streamlining the \textbf{Software Development} lifecycle and enhancing overall team \textbf{product improvement} and \textbf{adaptability}.
-\end{itemize}
-
-\textbf{Mobile-First E-commerce Platform} \hfill Summer 2023 \\
-\href{https://github.com/alexchen-dev/mobile-ecommerce-platform}{GitHub Repository}
-\begin{itemize}[leftmargin=*]
-    \item Led the \textbf{Full-stack Development} of a responsive e-commerce platform, integrating \textbf{Mobile Development} features and a dynamic \textbf{UI Design} to support \textbf{10,000+} concurrent users.
-    \item Developed robust backend services using \textbf{Java} and optimized \textbf{web search} functionality for efficient \textbf{Information Access} and \textbf{Data Access}, increasing user engagement by \textbf{15\%}.
-    \item Managed \textbf{Information Management} and \textbf{storage solutions}, contributing to the full \textbf{product development} cycle from conception to \textbf{software deployment} and ongoing \textbf{software maintenance}.
-\end{itemize}
-
-% Skills
-\section*{Technical Skills}
-\textbf{Programming Languages:} C, C++, Java, Python \\
-\textbf{Frameworks \& Libraries:} TensorFlow, PyTorch, scikit-learn, React Native, Spring Boot, Flask, Node.js \\
-\textbf{Tools \& Technologies:} Git, Docker, Kubernetes, Jenkins, JIRA, Kafka, gRPC, \textbf{Unix/Linux environments} \\
-\textbf{Databases:} MySQL, PostgreSQL, MongoDB, Redis, Cassandra \\
-\textbf{Cloud Platforms:} AWS, Google Cloud Platform (GCP), Azure \\
-\textbf{Core Concepts:} \textbf{Distributed Systems}, \textbf{Machine Learning (ML)}, \textbf{Information Retrieval}, \textbf{TCP/IP}, \textbf{Computer Science}, \textbf{Computer Engineering}, \textbf{Scalability}, \textbf{Large-scale Systems}, \textbf{Web Search}, \textbf{Distributed Computing}, \textbf{Large-scale System Design}, \textbf{Networking}, \textbf{Data Storage}, \textbf{Security}, \textbf{Artificial Intelligence (AI)}, \textbf{Natural Language Processing (NLP)}, \textbf{UI Design}, \textbf{Mobile Development}, \textbf{Full-stack Development}, \textbf{Software Design}, \textbf{Software Testing}, \textbf{Software Deployment}, \textbf{Software Maintenance}, \textbf{Storage Solutions}, \textbf{Large-scale Applications}, \textbf{Platform Development}, \textbf{Software Applications Development}, \textbf{Data Compression}, \textbf{Search Technologies}, \textbf{Data Access}, \textbf{Information Access}, \textbf{User Interaction}, \textbf{Information Management}, \textbf{Product Development}, \textbf{Collaboration}, \textbf{Problem-solving}, \textbf{Versatility}, \textbf{Leadership}, \textbf{Enthusiasm}, \textbf{Adaptability}, \textbf{Innovation}, \textbf{Creativity / Conception}, \textbf{Research}, \textbf{Contribution}
 
 \end{document}
