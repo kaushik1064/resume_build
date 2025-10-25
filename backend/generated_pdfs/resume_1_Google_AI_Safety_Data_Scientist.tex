@@ -1,81 +1,148 @@
-\documentclass[11pt,a4paper]{article}
-\usepackage[utf8]{inputenc}
-\usepackage[margin=0.75in]{geometry}
+\documentclass[a4paper,10pt]{article}
+%-----------------------------------------------------------
+\usepackage[top=0.75in, bottom=0.75in, left=0.55in, right=0.85in]{geometry}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{palatino}
+\usepackage{booktabs}
 \usepackage{hyperref}
 \usepackage{xcolor}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{color}
 
-% Remove page numbers
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,      
+    urlcolor=cyan,
+    pdftitle={Resume},
+    pdfpagemode=FullScreen,
+}
+
+\definecolor{mygrey}{gray}{0.75}
+\textheight=9.8in
+\raggedbottom
+\setlength{\tabcolsep}{0in}
+\newcommand{\isep}{-2 pt}
+\newcommand{\lsep}{-0.5cm}
+\newcommand{\psep}{-0.6cm}
+\renewcommand{\labelitemii}{$\circ$}
+
 \pagestyle{empty}
+%-----------------------------------------------------------
+% Custom commands
+\newcommand{\resheading}[1]{%
+  \vspace{1em}%
+  \noindent\colorbox{mygrey}{%
+    \parbox{\dimexpr\linewidth-2\fboxsep\relax}{%
+      \textbf{#1}%
+    }%
+  }%
+  \vspace{0.6em}%
+}
 
+\newcommand{\ressubheading}[3]{%
+\begin{tabular*}{\textwidth}{l @{\extracolsep{\fill}} r}
+    \textsc{\textbf{#1}} & \textsc{\textit{[#2]}} \\
+\end{tabular*}\vspace{-4pt}
+}
+
+%-----------------------------------------------------------
 \begin{document}
 
-% Contact Information
-\section*{Contact Information}
-Name: John Doe \\
-Email: john.doe@example.com \\
-Phone: +1 (555) 123-4567 \\
-LinkedIn: \href{https://www.linkedin.com/in/johndoe}{linkedin.com/in/johndoe} \\
-GitHub: \href{https://github.com/johndoe}{github.com/johndoe} \\
-Location: Mountain View, CA
+% Header Section
+\vspace*{-1.5cm}
+\noindent
 
-% Education
-\section*{Education}
-\textbf{Ph.D.} in Computer Science, Specialization in Machine Learning \hfill 2018 \\
-Stanford University \hfill Stanford, CA \\
-GPA: 3.9/4.0
+\textbf{SRI KAUSHIK AYALURI} \hspace{9.6cm} {\bf Not provided}\\
+\indent {\bf AI Safety Data Scientist}  \hspace{9.1cm} {\bf Not provided} \\
+\indent {\bf Visakhapatnam, India}  \hspace{7.9cm} {\bf linkedin.com/in/sri-kaushik-ayaluri} \\
+\indent {\bf github.com/kaushik1064} \\
 
-\textbf{M.S.} in Data Science \hfill 2015 \\
-Carnegie Mellon University \hfill Pittsburgh, PA
 
-\textbf{B.S.} in Mathematics and Statistics \hfill 2013 \\
-University of California, Berkeley \hfill Berkeley, CA
+%-----------------------------------------------------------
+\resheading{EDUCATION}
+\vspace{0.4em}
+\begin{tabular}{ p{2.5cm} @{\hskip 0.15in} p{5.5cm} @{\hskip 0.15in} p{3.5cm} @{\hskip 0.15in} p{2.5cm} @{\hskip 0.15in} p{1.5cm} }
+\toprule
+\textbf{Degree} & \textbf{Specialization} & \textbf{Institute} & \textbf{Year} & \textbf{CPI} \\
+\midrule
+B.Tech & \textit{Mechanical Engineering} & SCE College & 2022 & 7.01 \\
+Intermediate & \textit{Physics, Chemistry, \& Mathematics} & Chaitanya College & 2018 & 8.5 \\
+10th Grade & - & S.F.S High School & 2016 & 8.7 \\
+\bottomrule
+\end{tabular}
 
-% Professional Experience
-\section*{Professional Experience}
-\textbf{Senior AI Safety Data Scientist} \hfill 2021 – Present \\
-Tech Innovations Inc. \hfill San Francisco, CA
+%-----------------------------------------------------------
+\resheading{WORK EXPERIENCE}
+\vspace{0.4em}
 \begin{itemize}
-    \item Led cross-functional initiatives for \textbf{AI safety} and \textbf{risk mitigation} in \textbf{Generative AI} products, reducing critical safety incidents by \textbf{18\%} through advanced \textbf{machine learning techniques} and \textbf{statistical methods}.
-    \item Developed and deployed \textbf{scalable safety solutions} for \textbf{Large Language Models (LLMs)}, focusing on \textbf{harmful content moderation}, \textbf{child safety}, and \textbf{imminent threat analysis} across diverse datasets exceeding \textbf{10TB}.
-    \item Managed end-to-end projects, defining \textbf{project scope}, \textbf{goals}, and \textbf{deliverables} for \textbf{automated data pipelines} and \textbf{self-service dashboards}, providing timely \textbf{insights} to executive leadership and improving data accessibility by \textbf{30\%}.
-    \item Mentored \textbf{5 junior team members} on best practices in \textbf{large-scale data analysis}, \textbf{data science methods}, and ethical considerations in \textbf{AI/LLM-powered solutions}, fostering a culture of \textbf{proactive communication} and \textbf{collaboration}.
+  \item \textbf{Machine Learning \& Data Analytics Intern} — \textit{VELOXIVISION EDU TECH} \hfill Feb 2024–Aug 2024
+  \begin{itemize}
+    \item Engineered a \textbf{large-scale transaction analysis pipeline}, processing \textbf{50,000+ transactions} using \textbf{Pandas \& SQL}, reducing data processing time by \textbf{40\%} for **fraud detection**.
+    \item Developed a \textbf{K-Means clustering model} that segmented customers into \textbf{3 distinct groups}, improving personalized banking product recommendations by \textbf{30\%} and supporting **risk assessment**.
+    \item Implemented an \textbf{AI-driven anomaly detection system} (\textbf{Isolation Forest}) that flagged \textbf{98\% of fraudulent transactions}, visualized via \textbf{Power BI} for **abuse and fraud disciplines**.
+    \item Built an interactive \textbf{Power BI dashboard}, utilized for strategic banking decisions and to draw **insights from quantitative data**.
+  \end{itemize}
+
+  \item \textbf{Junior ML Engineer} — \textit{Omdena Organization} \hfill Oct 2023–Jan 2024
+  \begin{itemize}
+    \item Engineered automated \textbf{web scraping pipelines} for Nepali news using \textbf{Selenium \& BeautifulSoup}, collecting \textbf{500,000+ news articles} and reducing data acquisition time by \textbf{70\%} for **harmful content identification**.
+    \item \textbf{Fine-tuned a BERT-based NER model}, boosting accuracy from \textbf{65\% to 90\%}, enabling more precise detection of **abusive content in news articles** for **content moderation**.
+    \item Deployed \textbf{AI/ML models} using \textbf{MLOps (Dagshub, Docker, CI/CD)}, automating model training and deployment, reducing manual intervention by \textbf{60\%} for **robust content moderation pipelines**.
+    \item Implemented a real-time \textbf{API endpoint} for extracting and analyzing entity relationships in news data, supporting \textbf{100+ concurrent requests} for **threat analysis**.
+  \end{itemize}
+
+  \item \textbf{Data Scientist Intern} — \textit{Omdena Global Projects} \hfill May 2023–Jun 2023
+  \begin{itemize}
+    \item Developed an \textbf{AI-driven recommendation model} for Berlin grocery stores, achieving \textbf{90\% precision} by applying advanced \textbf{data science methods}.
+    \item Optimized \textbf{large-scale data collection}, preprocessing, and \textbf{web scraping} of \textbf{10,000+ grocery listings} using \textbf{NLP pipelines}.
+    \item Devised innovative \textbf{machine learning solutions} for personalized recommendations, generating **quantitative and qualitative insights** from user interactions, resulting in over \textbf{1,500 unique interactions per day}.
+  \end{itemize}
 \end{itemize}
 
-\textbf{Data Scientist, Trust \& Safety} \hfill 2018 – 2021 \\
-Global Social Platform \hfill Seattle, WA
+%-----------------------------------------------------------
+\resheading{PROJECTS}
+\vspace{0.4em}
 \begin{itemize}
-    \item Applied \textbf{advanced machine learning techniques} to identify trends and patterns in \textbf{abuse and fraud disciplines}, enhancing detection accuracy by \textbf{25\%} and reducing false positives by \textbf{15\%} across a user base of \textbf{500M+}.
-    \item Conducted in-depth \textbf{threat analysis} and \textbf{web security} assessments, developing actionable \textbf{insights} from \textbf{quantitative} and \textbf{qualitative data} to strengthen platform protection measures and inform strategic decision-making.
-    \item Utilized \textbf{SQL} for large-scale data extraction and analysis, and \textbf{Python} for developing \textbf{scripting languages} and custom algorithms to automate data processing workflows, saving over \textbf{200 hours} annually.
-    \item Collaborated with engineering teams to examine existing protection measures, uncovering potential shortcomings, and recommending \textbf{security enhancement} strategies that improved system resilience.
+  \item \textbf{AI-Powered Browser Automation Platform} \hfill Jan 2025–Present
+  \begin{itemize}
+    \item Architected a full-stack \textbf{AI-powered browser automation platform} (\textbf{FastAPI + Next.js}) with \textbf{12+ endpoints} for **large-scale data collection** and **threat analysis**.
+    \item Integrated \textbf{Gemini LLM, Groq Whisper, and OpenAI} for multimodal intelligence, enabling advanced \textbf{prompt engineering} and **AI safety evaluations**.
+  \end{itemize}
+
+  \item \textbf{Conversational AI Chatbot with Real-Time Web Scraping and Vector Retrieval} \hfill Nov 2024–Dec 2024
+  \begin{itemize}
+    \item Developed an end-to-end Flask chatbot leveraging \textbf{LangChain} and \textbf{Mistral-7B LLM}, optimized for **real-time data analysis** and **harmful content detection**, improving inference speed by \textbf{40\%}.
+    \item Utilized \textbf{FAISS} and \textbf{HuggingFace Embeddings} for efficient vector retrieval, achieving \textbf{90\% retrieval accuracy} crucial for **contextual safety assessments** and reducing retrieval latency by \textbf{30\%}.
+  \end{itemize}
+
+  \item \textbf{AI Pipeline for Image Detection, Classification, and Captioning} \hfill Sep 2024–Oct 2024
+  \begin{itemize}
+    \item Constructed an \textbf{AI pipeline} using \textbf{Google ViT} and \textbf{YOLOv5} for **real-time image detection, classification, and captioning**, improving accuracy by \textbf{60\%} for **visual content moderation**.
+    \item Deployed via Flask, enabling \textbf{real-time inference} for \textbf{80+ users} and facilitating **large-scale harmful content identification**.
+  \end{itemize}
 \end{itemize}
 
-% Projects
-\section*{Projects}
-\textbf{LLM Safety \& Bias Mitigation Framework} \hfill 2023 \\
-\href{https://github.com/johndoe/llm-safety-framework}{GitHub Link}
+%-----------------------------------------------------------
+\resheading{CERTIFICATIONS}
+\vspace{0.4em}
 \begin{itemize}
-    \item Developed a comprehensive framework for evaluating and mitigating biases in \textbf{Large Language Models (LLMs)} using \textbf{Python}, \textbf{Julia}, and advanced \textbf{statistical methods}.
-    \item Implemented novel \textbf{prompt engineering} techniques and \textbf{fine-tuning LLMs} strategies on custom datasets to reduce harmful outputs and improve model fairness by \textbf{12\%}.
-    \item Conducted extensive \textbf{data analysis} to identify subtle trends in model behavior, generating summary statistics and drawing critical \textbf{insights} on potential real-world safety risks.
-    \item Explored applications of \textbf{Vertex AI} and foundational models like \textbf{Gemini} for enhanced safety evaluation and developed automated reporting for continuous monitoring.
+  \item \textbf{Data Science with AI} — Veloxivision Edu Tech \hfill Oct 2022–Oct 2023
+  \begin{itemize}
+    \item Covered end-to-end \textbf{ML pipelines}, \textbf{MLOps}, and \textbf{NLP (BERT, Transformers)} with \textbf{90\%+ accuracy} in capstone projects, focusing on robust and deployable **AI techniques**.
+  \end{itemize}
 \end{itemize}
 
-\textbf{Automated Harmful Content Detection System} \hfill 2022 \\
-\href{https://github.com/johndoe/harmful-content-detector}{GitHub Link}
+%-----------------------------------------------------------
+\resheading{TECHNICAL SKILLS}
+\vspace{0.4em}
 \begin{itemize}
-    \item Designed and deployed an \textbf{AI/ML-powered solution} for real-time detection of harmful content, processing over \textbf{1 million} data points daily with \textbf{95\%} accuracy.
-    \item Leveraged \textbf{C++} for performance-critical components and \textbf{Python} for model training and data orchestration, ensuring \textbf{scalable solutions} for high-throughput data streams.
-    \item Developed \textbf{automated data pipelines} and integrated with existing security infrastructure to provide immediate alerts for \textbf{imminent threat analysis}, significantly reducing response time.
-    \item Focused on \textbf{security enhancement} by continuously examining protection measures and integrating feedback loops from human moderators to refine model performance and adapt to evolving threats.
+  \item \textbf{Programming Languages:} Python, SQL, JavaScript
+  \item \textbf{AI/ML Frameworks \& Tools:} TensorFlow, PyTorch, LangChain, Hugging Face, Docker, Git, MLOps (CI/CD, Dagshub), AWS, FastAPI, Flask, Next.js
+  \item \textbf{Data Science Libraries \& Databases:} Pandas, NumPy, SciPy, OpenCV, MySQL, PostgreSQL, FAISS, BeautifulSoup, Selenium
+  \item \textbf{AI/ML Expertise:} NLP, Deep Learning, Computer Vision, LLM Integration, Voice AI, \textbf{Prompt Engineering}, \textbf{Fine-tuning LLMs}, \textbf{Large-scale Data Analysis}, \textbf{Abuse \& Fraud Disciplines}, \textbf{Harmful Content Moderation}, \textbf{Threat Analysis}, \textbf{Data Science Methods}
 \end{itemize}
-
-% Skills
-\section*{Technical Skills}
-\textbf{Programming Languages:} Python, C, C++, Julia, SQL, Scripting languages \\
-\textbf{Frameworks \& Libraries:} Machine Learning (ML), Artificial Intelligence (AI), Generative AI, Large Language Models (LLMs), AI/LLM-powered solutions, Vertex AI, Foundational models (Gemini, Juno, Veo), TensorFlow, PyTorch, Scikit-learn, Pandas, NumPy \\
-\textbf{Tools \& Technologies:} Data analysis, Identifying trends, Generating summary statistics, Drawing insights (quantitative data, qualitative data), Project management (defining project scope, goals, deliverables), Large-scale data analysis, Data science, Abuse and fraud disciplines, Web security, Harmful content moderation, Threat analysis, Prompt engineering, Fine-tuning LLMs, Risk mitigation (generative AI), Real-world safety (LLM/AI technology), Imminent threat analysis, Child safety, Developing scalable safety solutions, AI products, Advanced machine learning techniques, Advanced AI techniques, Statistical methods, Data science methods, Examining protection measures, Uncovering potential shortcomings, Developing actionable insights, Security enhancement, Developing automated data pipelines, Self-service dashboards, Providing timely insights, Driving progress, Solving problems, Mentoring (junior team members), Technical know-how, Google Cloud Platform (GCP) \\
-\textbf{Databases:} SQL, NoSQL (e.g., MongoDB, Cassandra) \\
-\textbf{Cloud Platforms:} Google Cloud Platform (GCP), AWS, Azure
 
 \end{document}

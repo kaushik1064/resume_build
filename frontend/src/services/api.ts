@@ -219,6 +219,23 @@ class ResumeAPIService {
       throw new Error('Failed to analyze resume sections');
     }
   }
+
+  // Analyze domain compatibility
+  async analyzeDomainCompatibility(resumeText: string, jobDescriptions: any[]) {
+    try {
+      const response = await fetch(`${API_BASE_URL}/analyze/domain`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ resumeText, jobDescriptions }),
+      });
+      return await response.json();
+    } catch (error) {
+      console.error('Domain analysis failed:', error);
+      throw new Error('Failed to analyze domain compatibility');
+    }
+  }
 }
 
 export const resumeAPI = new ResumeAPIService();

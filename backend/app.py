@@ -279,8 +279,67 @@ Be comprehensive - extract every detail."""
             logger.error(f"Resume extraction failed: {e}")
             return {"projects_and_experience": "", "raw_resume": resume_text}
 
+    def analyze_domain_compatibility(self, resume_text, jd_data):
+        """Analyze if resume domain matches JD domain and detect mismatches."""
+        if not self.gemini_model:
+            return {"compatible": True, "mismatch_detected": False, "analysis": ""}
+
+        job_title = jd_data.get('job_title', 'Unknown Role')
+        jd_text = jd_data.get('raw_jd', '')
+        
+        domain_analysis_prompt = f"""Analyze the domain compatibility between this resume and job description.
+
+RESUME TEXT:
+{resume_text[:2000]}  # Limit to first 2000 chars
+
+JOB DESCRIPTION:
+{job_title}
+{jd_text[:2000]}  # Limit to first 2000 chars
+
+Provide analysis in this EXACT format:
+
+## DOMAIN COMPATIBILITY
+[Compatible/Partially Compatible/Incompatible]
+
+## RESUME DOMAIN
+[Primary domain/field of the resume: e.g., "Machine Learning", "Web Development", "Data Science"]
+
+## JD DOMAIN  
+[Primary domain/field of the job: e.g., "Software Engineering", "AI/ML", "Backend Development"]
+
+## COMPATIBILITY ANALYSIS
+[Brief explanation of why they are compatible/incompatible]
+
+## RECOMMENDATION
+[Should proceed with reconstruction or ask user confirmation]"""
+
+        try:
+            resp = self.gemini_model.generate_content(domain_analysis_prompt)
+            analysis_text = resp.text
+            
+            # Parse compatibility
+            compatible = True
+            mismatch_detected = False
+            
+            if "## DOMAIN COMPATIBILITY" in analysis_text:
+                compatibility_section = analysis_text.split("## DOMAIN COMPATIBILITY")[1].split("##")[0].strip()
+                if "incompatible" in compatibility_section.lower():
+                    compatible = False
+                    mismatch_detected = True
+                elif "partially compatible" in compatibility_section.lower():
+                    mismatch_detected = True
+            
+            return {
+                "compatible": compatible,
+                "mismatch_detected": mismatch_detected,
+                "analysis": analysis_text,
+                "job_title": job_title
+            }
+        except Exception as e:
+            logger.error(f"Domain analysis failed: {e}")
+            return {"compatible": True, "mismatch_detected": False, "analysis": "", "job_title": job_title}
+
     def validate_resume_sections(self, resume_text):
-        """Check which sections are present and missing in the resume."""
         resume_lower = resume_text.lower()
 
         required_sections = {
@@ -396,11 +455,14 @@ JOB REQUIREMENTS:
 
 INSTRUCTIONS:
 1. Use EXACT personal details (name, email, phone, education)
-2. Keep existing project/experience structure but enhance bullet points for JD match
-3. Add metrics and JD keywords to bullet points
-4. Use \\textbf{{}} for key terms
-5. Follow template structure exactly
-6. Return only LaTeX code
+2. Add "{job_title}" below the person's name in header
+3. Keep existing project/experience structure but enhance bullet points for JD match
+4. Ensure AT LEAST 4 bullet points for each project and work experience
+5. Add metrics and JD keywords to bullet points (%, numbers, scale)
+6. Transform work experience descriptions to match JD domain while keeping original company/job names
+7. Use \\textbf{{}} for key terms
+8. Follow template structure exactly
+9. Return only LaTeX code
 
 Generate resume:"""
 
@@ -1050,6 +1112,58 @@ def analyze_resume_sections():
         return jsonify({
             'success': False,
             'error': 'Failed to analyze resume sections'
+        }), 500
+
+@app.route('/api/analyze/domain', methods=['POST'])
+@limiter.limit("10 per minute")
+def analyze_domain_compatibility():
+    """Analyze domain compatibility between resume and job descriptions"""
+    try:
+        data = request.get_json()
+        resume_text = data.get('resumeText', '')
+        job_descriptions = data.get('jobDescriptions', [])
+
+        if not resume_text or not job_descriptions:
+            return jsonify({
+                'success': False,
+                'error': 'Resume text and job descriptions are required'
+            }), 400
+
+        domain_analyses = []
+        overall_compatible = True
+        any_mismatch = False
+
+        for jd in job_descriptions:
+            if jd.get('analysis'):
+                domain_analysis = resume_processor.analyze_domain_compatibility(resume_text, jd['analysis'])
+                domain_analyses.append({
+                    'job_title': domain_analysis.get('job_title', 'Unknown'),
+                    'compatible': domain_analysis.get('compatible', True),
+                    'mismatch_detected': domain_analysis.get('mismatch_detected', False),
+                    'analysis': domain_analysis.get('analysis', '')
+                })
+                
+                if not domain_analysis.get('compatible', True):
+                    overall_compatible = False
+                if domain_analysis.get('mismatch_detected', False):
+                    any_mismatch = True
+
+        return jsonify({
+            'success': True,
+            'message': 'Domain analysis completed',
+            'data': {
+                'domain_analyses': domain_analyses,
+                'overall_compatible': overall_compatible,
+                'any_mismatch_detected': any_mismatch,
+                'needs_confirmation': any_mismatch
+            }
+        })
+
+    except Exception as e:
+        logger.error(f"Domain analysis error: {e}")
+        return jsonify({
+            'success': False,
+            'error': 'Failed to analyze domain compatibility'
         }), 500
 
 if __name__ == '__main__':

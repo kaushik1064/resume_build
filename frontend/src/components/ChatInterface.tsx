@@ -18,6 +18,7 @@ type ConversationStep =
   | 'initial'
   | 'awaiting_resume'
   | 'awaiting_urls'
+  | 'awaiting_domain_confirmation'
   | 'awaiting_missing_sections'
   | 'generating'
   | 'complete';
@@ -94,6 +95,86 @@ export function ChatInterface() {
             "No problem! Whenever you're ready to create your resume, just say 'yes' or 'start' and I'll help you build a professional resume.",
             'bot'
           );
+        }, 500);
+      }
+      return;
+    }
+    
+    // Special handling for domain confirmation step
+    if (step === 'awaiting_domain_confirmation') {
+      if (['yes', 'y', 'proceed', 'continue'].some(word => userMessage.toLowerCase().includes(word))) {
+        addMessage("Great! I'll proceed with reconstruction to match the job requirements. Let me analyze what sections to enhance...", 'bot');
+        setStep('awaiting_missing_sections');
+        
+        // Continue with section analysis
+        setTimeout(async () => {
+          try {
+            const sectionAnalysis = await resumeAPI.analyzeResumeSections(resumeData.fileText || '');
+            
+            if (sectionAnalysis.success) {
+              const { missing_sections, enhancement_suggestions } = sectionAnalysis.data;
+              
+              let message = "I'll enhance your resume with: ";
+              if (missing_sections.length > 0) {
+                message += `missing sections (${missing_sections.join(', ')}) and `;
+              }
+              if (enhancement_suggestions.length > 0) {
+                message += `enhanced existing sections (${enhancement_suggestions.join(', ')})`;
+              }
+              message += ". Generating your tailored resume now...";
+              
+              addMessage(message, 'bot');
+            } else {
+              addMessage("I'll enhance your resume to match the job requirements. Generating your tailored resume now...", 'bot');
+            }
+            
+            // Trigger resume generation
+            setTimeout(() => {
+              generateResume();
+            }, 500);
+          } catch (error) {
+            console.error('Section analysis failed:', error);
+            addMessage("I'll enhance your resume to match the job requirements. Generating your tailored resume now...", 'bot');
+            setTimeout(() => {
+              generateResume();
+            }, 500);
+          }
+        }, 500);
+      } else {
+        addMessage("No problem! I'll skip the reconstruction and proceed with normal enhancement. Let me analyze what sections to enhance...", 'bot');
+        setStep('awaiting_missing_sections');
+        
+        // Continue with normal section analysis
+        setTimeout(async () => {
+          try {
+            const sectionAnalysis = await resumeAPI.analyzeResumeSections(resumeData.fileText || '');
+            
+            if (sectionAnalysis.success) {
+              const { missing_sections, enhancement_suggestions } = sectionAnalysis.data;
+              
+              let message = "Perfect! I've analyzed your resume. ";
+              if (missing_sections.length > 0) {
+                message += `I found some missing sections: ${missing_sections.join(', ')}. Would you like me to add these sections? `;
+              }
+              if (enhancement_suggestions.length > 0) {
+                message += `Also, I can enhance your existing sections: ${enhancement_suggestions.join(', ')}. `;
+              }
+              message += "Please let me know what you'd like me to do.";
+              
+              addMessage(message, 'bot');
+            } else {
+              addMessage(
+                "Perfect! I've analyzed the job descriptions. Are there any specific sections you'd like me to add or enhance in your resume? Type your response below.",
+                'bot'
+              );
+            }
+          } catch (error) {
+            console.error('Section analysis failed:', error);
+            addMessage(
+              "Perfect! I've analyzed the job descriptions. Are there any specific sections you'd like me to add or enhance in your resume? Type your response below.",
+              'bot'
+            );
+          }
         }, 500);
       }
       return;
@@ -189,7 +270,29 @@ export function ChatInterface() {
         
         setTimeout(async () => {
           try {
-            // Analyze resume sections
+            // First analyze domain compatibility
+            const domainAnalysis = await resumeAPI.analyzeDomainCompatibility(
+              resumeData.fileText || '', 
+              resumeData.jobDescriptions || []
+            );
+            
+            if (domainAnalysis.success && domainAnalysis.data.any_mismatch_detected) {
+              // Domain mismatch detected - ask for confirmation
+              const mismatches = domainAnalysis.data.domain_analyses.filter(da => da.mismatch_detected);
+              let message = "I've detected a domain mismatch between your resume and some job descriptions:\n\n";
+              
+              mismatches.forEach(mismatch => {
+                message += `• ${mismatch.job_title}: ${mismatch.analysis.split('## COMPATIBILITY ANALYSIS')[1]?.split('##')[0]?.trim() || 'Domain mismatch detected'}\n`;
+              });
+              
+              message += "\nWould you like me to proceed with reconstruction? I'll transform your projects and work experience to match the job requirements while keeping your original details. Type 'yes' to proceed or 'no' to skip.";
+              
+              addMessage(message, 'bot');
+              setStep('awaiting_domain_confirmation');
+              return;
+            }
+            
+            // No domain mismatch - proceed with normal section analysis
             const sectionAnalysis = await resumeAPI.analyzeResumeSections(resumeData.fileText || '');
             
             if (sectionAnalysis.success) {
@@ -215,7 +318,7 @@ export function ChatInterface() {
               );
             }
           } catch (error) {
-            console.error('Section analysis failed:', error);
+            console.error('Analysis failed:', error);
             addMessage(
               "Perfect! I've analyzed the job descriptions. Are there any specific sections you'd like me to add or enhance in your resume? Type your response below.",
               'bot'
@@ -537,7 +640,7 @@ export function ChatInterface() {
         )}
 
         {/* Input Area */}
-        {step !== 'awaiting_resume' && step !== 'awaiting_urls' && step !== 'generating' && (
+        {step !== 'awaiting_resume' && step !== 'awaiting_urls' && step !== 'awaiting_domain_confirmation' && step !== 'generating' && (
           <div className="border-t border-white/30 p-4 backdrop-blur-xl bg-white/[0.02] relative">
             <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-white/10 pointer-events-none" />
             <div className="flex gap-2 relative z-10">
