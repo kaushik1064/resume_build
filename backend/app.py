@@ -644,10 +644,6 @@ def root():
         'documentation': 'https://github.com/your-repo'
     })
 
-# Your existing API routes continue below...
-@app.route('/api/health', methods=['GET'])
-def health_check():
-    # ... rest of your code
 
 # API Routes
 @app.route('/api/health', methods=['GET'])
