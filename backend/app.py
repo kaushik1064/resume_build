@@ -34,7 +34,11 @@ logger = logging.getLogger(__name__)
 
 # Initialize Flask app
 app = Flask(__name__)
-CORS(app, origins=os.getenv('CORS_ORIGINS', 'http://localhost:5173,http://localhost:3000,http://127.0.0.1:5173,http://127.0.0.1:3000').split(','))
+CORS(app, 
+     origins=os.getenv('CORS_ORIGINS', 'http://localhost:5173,http://localhost:3000').split(','),
+     supports_credentials=True,
+     allow_headers=["Content-Type", "Authorization"],
+     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
 
 # Configure rate limiting
 limiter = Limiter(
