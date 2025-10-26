@@ -608,6 +608,43 @@ Return ONLY corrected LaTeX code. No explanations."""
 # Initialize processor
 resume_processor = ResumeProcessor()
 
+# Initialize processor
+resume_processor = ResumeProcessor()
+
+# ADD THIS ROOT ROUTE HERE ⬇️
+@app.route('/', methods=['GET'])
+def root():
+    """Root endpoint - API documentation"""
+    return jsonify({
+        'status': 'OK',
+        'service': 'Resume Builder API',
+        'version': '1.0.0',
+        'message': 'API is running successfully',
+        'gemini_configured': bool(GEMINI_API_KEY),
+        'endpoints': {
+            'health': '/api/health',
+            'chat': '/api/chat/message',
+            'upload_resume': '/api/upload/resume',
+            'upload_text': '/api/upload/text-resume',
+            'job_urls': '/api/upload/job-urls',
+            'generate': '/api/resume/generate',
+            'download': '/api/resume/download/<filename>',
+            'list': '/api/resume/list',
+            'extract_personal': '/api/extract/personal',
+            'extract_projects': '/api/extract/projects',
+            'template': '/api/template',
+            'analyze_sections': '/api/analyze/sections',
+            'analyze_domain': '/api/analyze/domain',
+            'ats_score': '/api/analyze/ats-score'
+        },
+        'documentation': 'https://github.com/your-repo'
+    })
+
+# Your existing API routes continue below...
+@app.route('/api/health', methods=['GET'])
+def health_check():
+    # ... rest of your code
+
 # API Routes
 @app.route('/api/health', methods=['GET'])
 def health_check():
