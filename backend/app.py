@@ -612,10 +612,6 @@ Return ONLY corrected LaTeX code. No explanations."""
 # Initialize processor
 resume_processor = ResumeProcessor()
 
-# Initialize processor
-resume_processor = ResumeProcessor()
-
-# ADD THIS ROOT ROUTE HERE ⬇️
 @app.route('/', methods=['GET'])
 def root():
     """Root endpoint - API documentation"""
@@ -638,12 +634,9 @@ def root():
             'extract_projects': '/api/extract/projects',
             'template': '/api/template',
             'analyze_sections': '/api/analyze/sections',
-            'analyze_domain': '/api/analyze/domain',
-            'ats_score': '/api/analyze/ats-score'
-        },
-        'documentation': 'https://github.com/your-repo'
+            'analyze_domain': '/api/analyze/domain'
+        }
     })
-
 
 # API Routes
 @app.route('/api/health', methods=['GET'])
