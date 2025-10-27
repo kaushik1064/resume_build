@@ -830,6 +830,8 @@ def process_job_urls():
             'error': 'Failed to process job URLs'
         }), 500
 
+# Replace the /api/resume/generate endpoint with this fixed version
+
 @app.route('/api/resume/generate', methods=['POST'])
 @limiter.limit("3 per minute")
 def generate_resume():
@@ -845,14 +847,36 @@ def generate_resume():
         projects_data = data.get('projectsData', {})
 
         logger.info(f"📦 Received data: resume_text_length={len(resume_text)}, job_descriptions_count={len(job_descriptions)}")
-        logger.info(f"📋 Job descriptions structure: {[jd.get('analysis', {}).get('job_title', 'Unknown') if isinstance(jd, dict) else 'Invalid' for jd in job_descriptions]}")
+        
+        # Log job descriptions structure
+        for i, jd in enumerate(job_descriptions):
+            logger.info(f"📋 Job {i}: {type(jd)} - Keys: {jd.keys() if isinstance(jd, dict) else 'Not a dict'}")
+            if isinstance(jd, dict):
+                logger.info(f"   - Has 'analysis': {bool(jd.get('analysis'))}")
+                if jd.get('analysis'):
+                    logger.info(f"   - Analysis type: {type(jd['analysis'])}")
+                    logger.info(f"   - Analysis keys: {jd['analysis'].keys() if isinstance(jd['analysis'], dict) else 'Not a dict'}")
 
         # Validate required fields
-        if not resume_text or not job_descriptions or not template_content:
-            logger.error(f"❌ Missing required fields: resume_text={bool(resume_text)}, job_descriptions={bool(job_descriptions)}, template_content={bool(template_content)}")
+        if not resume_text:
+            logger.error("❌ Missing resume text")
             return jsonify({
                 'success': False,
-                'error': 'Missing required fields: resumeText, jobDescriptions, and templateContent are required'
+                'error': 'Resume text is required'
+            }), 400
+            
+        if not job_descriptions or len(job_descriptions) == 0:
+            logger.error("❌ No job descriptions provided")
+            return jsonify({
+                'success': False,
+                'error': 'At least one job description is required'
+            }), 400
+            
+        if not template_content:
+            logger.error("❌ Missing template content")
+            return jsonify({
+                'success': False,
+                'error': 'Template content is required'
             }), 400
 
         results = []
@@ -860,12 +884,50 @@ def generate_resume():
         # Process each job description
         for i, jd in enumerate(job_descriptions):
             try:
+                # Validate job description structure
+                if not isinstance(jd, dict):
+                    logger.error(f"❌ Job description {i} is not a dict: {type(jd)}")
+                    results.append({
+                        'index': i + 1,
+                        'company': 'Unknown Company',
+                        'role': 'Unknown Role',
+                        'success': False,
+                        'error': 'Invalid job description format'
+                    })
+                    continue
+                
+                # Check if analysis exists and is valid
+                analysis = jd.get('analysis')
+                if not analysis or not isinstance(analysis, dict):
+                    logger.error(f"❌ Job description {i} missing or invalid analysis: {type(analysis)}")
+                    
+                    # Try to extract from raw text if available
+                    if jd.get('text'):
+                        logger.info(f"🔄 Attempting to re-extract from text for job {i}")
+                        analysis = resume_processor.extract_job_role_and_skills(jd['text'])
+                        jd['analysis'] = analysis
+                    else:
+                        results.append({
+                            'index': i + 1,
+                            'company': 'Unknown Company',
+                            'role': 'Unknown Role',
+                            'success': False,
+                            'error': 'Job description analysis missing or invalid'
+                        })
+                        continue
+                
+                # Get job details safely
+                company = analysis.get('company', 'Unknown Company')
+                job_title = analysis.get('job_title', 'Unknown Role')
+                
+                logger.info(f"🔨 Generating resume {i + 1} for {job_title} at {company}")
+
                 # Generate tailored resume for this job
                 tailored_latex = resume_processor.reconstruct_resume_with_jd(
                     template_content,
                     personal_data or {'personal_and_education': '', 'raw_resume': resume_text},
                     projects_data or {'projects_and_experience': '', 'raw_resume': resume_text},
-                    jd.get('analysis', {}),
+                    analysis,
                     section_preferences or {'add_sections': [], 'skip_sections': []}
                 )
 
@@ -883,8 +945,8 @@ def generate_resume():
                     cleaned_latex = sanitized_latex
 
                 # Generate unique filename
-                safe_company = re.sub(r'[^\w\s-]', '', jd.get('analysis', {}).get('company', 'Unknown'))[:30]
-                safe_role = re.sub(r'[^\w\s-]', '', jd.get('analysis', {}).get('job_title', 'Unknown'))[:30]
+                safe_company = re.sub(r'[^\w\s-]', '', company)[:30]
+                safe_role = re.sub(r'[^\w\s-]', '', job_title)[:30]
                 output_name = f"resume_{i + 1}_{safe_company}_{safe_role}.pdf".replace(' ', '_')
 
                 # Compile to PDF
@@ -892,19 +954,31 @@ def generate_resume():
 
                 results.append({
                     'index': i + 1,
-                    'company': jd.get('analysis', {}).get('company', 'Unknown Company'),
-                    'role': jd.get('analysis', {}).get('job_title', 'Unknown Role'),
+                    'company': company,
+                    'role': job_title,
                     'pdfPath': pdf_path,
                     'filename': output_name,
                     'success': True
                 })
+                
+                logger.info(f"✅ Successfully generated resume {i + 1}")
 
             except Exception as e:
-                logger.error(f"Failed to generate resume for job {i + 1}: {e}")
+                logger.error(f"❌ Failed to generate resume for job {i + 1}: {str(e)}")
+                import traceback
+                logger.error(traceback.format_exc())
+                
+                # Try to get company/role even on failure
+                company = 'Unknown Company'
+                role = 'Unknown Role'
+                if isinstance(jd, dict) and jd.get('analysis') and isinstance(jd['analysis'], dict):
+                    company = jd['analysis'].get('company', 'Unknown Company')
+                    role = jd['analysis'].get('job_title', 'Unknown Role')
+                
                 results.append({
                     'index': i + 1,
-                    'company': jd.get('analysis', {}).get('company', 'Unknown Company'),
-                    'role': jd.get('analysis', {}).get('job_title', 'Unknown Role'),
+                    'company': company,
+                    'role': role,
                     'success': False,
                     'error': str(e)
                 })
@@ -934,10 +1008,12 @@ def generate_resume():
         })
 
     except Exception as e:
-        logger.error(f"Resume generation error: {e}")
+        logger.error(f"❌ Resume generation error: {str(e)}")
+        import traceback
+        logger.error(traceback.format_exc())
         return jsonify({
             'success': False,
-            'error': 'Failed to generate resume'
+            'error': f'Failed to generate resume: {str(e)}'
         }), 500
 
 @app.route('/api/resume/download/<filename>', methods=['GET'])
