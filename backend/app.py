@@ -848,14 +848,14 @@ def generate_resume():
 
         logger.info(f"📦 Received data: resume_text_length={len(resume_text)}, job_descriptions_count={len(job_descriptions)}")
         
-        # Log job descriptions structure
+        # Log job descriptions structure for debugging
         for i, jd in enumerate(job_descriptions):
-            logger.info(f"📋 Job {i}: {type(jd)} - Keys: {jd.keys() if isinstance(jd, dict) else 'Not a dict'}")
+            logger.info(f"📋 Job {i}: type={type(jd)}")
             if isinstance(jd, dict):
-                logger.info(f"   - Has 'analysis': {bool(jd.get('analysis'))}")
+                logger.info(f"   - Keys: {list(jd.keys())}")
+                logger.info(f"   - Has analysis: {bool(jd.get('analysis'))}")
                 if jd.get('analysis'):
                     logger.info(f"   - Analysis type: {type(jd['analysis'])}")
-                    logger.info(f"   - Analysis keys: {jd['analysis'].keys() if isinstance(jd['analysis'], dict) else 'Not a dict'}")
 
         # Validate required fields
         if not resume_text:
@@ -886,7 +886,7 @@ def generate_resume():
             try:
                 # Validate job description structure
                 if not isinstance(jd, dict):
-                    logger.error(f"❌ Job description {i} is not a dict: {type(jd)}")
+                    logger.error(f"❌ Job {i}: Not a dict, type={type(jd)}")
                     results.append({
                         'index': i + 1,
                         'company': 'Unknown Company',
@@ -898,25 +898,30 @@ def generate_resume():
                 
                 # Check if analysis exists and is valid
                 analysis = jd.get('analysis')
-                if not analysis or not isinstance(analysis, dict):
-                    logger.error(f"❌ Job description {i} missing or invalid analysis: {type(analysis)}")
-                    
-                    # Try to extract from raw text if available
-                    if jd.get('text'):
-                        logger.info(f"🔄 Attempting to re-extract from text for job {i}")
-                        analysis = resume_processor.extract_job_role_and_skills(jd['text'])
-                        jd['analysis'] = analysis
-                    else:
-                        results.append({
-                            'index': i + 1,
-                            'company': 'Unknown Company',
-                            'role': 'Unknown Role',
-                            'success': False,
-                            'error': 'Job description analysis missing or invalid'
-                        })
-                        continue
                 
-                # Get job details safely
+                if not analysis:
+                    logger.error(f"❌ Job {i}: Missing analysis field")
+                    results.append({
+                        'index': i + 1,
+                        'company': 'Unknown Company',
+                        'role': 'Unknown Role',
+                        'success': False,
+                        'error': 'Job description analysis is missing'
+                    })
+                    continue
+                
+                if not isinstance(analysis, dict):
+                    logger.error(f"❌ Job {i}: Analysis is not a dict, type={type(analysis)}")
+                    results.append({
+                        'index': i + 1,
+                        'company': 'Unknown Company',
+                        'role': 'Unknown Role',
+                        'success': False,
+                        'error': 'Job description analysis is invalid'
+                    })
+                    continue
+                
+                # Get job details safely with defaults
                 company = analysis.get('company', 'Unknown Company')
                 job_title = analysis.get('job_title', 'Unknown Role')
                 
@@ -925,10 +930,10 @@ def generate_resume():
                 # Generate tailored resume for this job
                 tailored_latex = resume_processor.reconstruct_resume_with_jd(
                     template_content,
-                    personal_data or {'personal_and_education': '', 'raw_resume': resume_text},
-                    projects_data or {'projects_and_experience': '', 'raw_resume': resume_text},
+                    personal_data if personal_data else {'personal_and_education': '', 'raw_resume': resume_text},
+                    projects_data if projects_data else {'projects_and_experience': '', 'raw_resume': resume_text},
                     analysis,
-                    section_preferences or {'add_sections': [], 'skip_sections': []}
+                    section_preferences if section_preferences else {'add_sections': [], 'skip_sections': []}
                 )
 
                 # Sanitize LaTeX
@@ -938,16 +943,20 @@ def generate_resume():
                 if GEMINI_API_KEY:
                     try:
                         cleaned_latex = resume_processor.lint_latex_with_gemini(sanitized_latex)
-                    except Exception as e:
-                        logger.warning(f"Linting failed, using sanitized version: {e}")
+                    except Exception as lint_error:
+                        logger.warning(f"⚠️ Linting failed, using sanitized version: {lint_error}")
                         cleaned_latex = sanitized_latex
                 else:
+                    logger.warning("⚠️ GEMINI_API_KEY not set, skipping linting")
                     cleaned_latex = sanitized_latex
 
                 # Generate unique filename
-                safe_company = re.sub(r'[^\w\s-]', '', company)[:30]
-                safe_role = re.sub(r'[^\w\s-]', '', job_title)[:30]
-                output_name = f"resume_{i + 1}_{safe_company}_{safe_role}.pdf".replace(' ', '_')
+                safe_company = re.sub(r'[^\w\s-]', '', company)[:30].strip()
+                safe_role = re.sub(r'[^\w\s-]', '', job_title)[:30].strip()
+                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+                output_name = f"resume_{timestamp}_{safe_company}_{safe_role}.pdf".replace(' ', '_').replace('__', '_')
+
+                logger.info(f"📄 Compiling PDF: {output_name}")
 
                 # Compile to PDF
                 pdf_path = resume_processor.compile_latex_to_pdf(cleaned_latex, output_name)
@@ -961,35 +970,40 @@ def generate_resume():
                     'success': True
                 })
                 
-                logger.info(f"✅ Successfully generated resume {i + 1}")
+                logger.info(f"✅ Successfully generated resume {i + 1}: {output_name}")
 
-            except Exception as e:
-                logger.error(f"❌ Failed to generate resume for job {i + 1}: {str(e)}")
+            except Exception as job_error:
+                logger.error(f"❌ Failed to generate resume for job {i + 1}: {str(job_error)}")
                 import traceback
                 logger.error(traceback.format_exc())
                 
                 # Try to get company/role even on failure
                 company = 'Unknown Company'
                 role = 'Unknown Role'
-                if isinstance(jd, dict) and jd.get('analysis') and isinstance(jd['analysis'], dict):
-                    company = jd['analysis'].get('company', 'Unknown Company')
-                    role = jd['analysis'].get('job_title', 'Unknown Role')
+                try:
+                    if isinstance(jd, dict) and jd.get('analysis') and isinstance(jd['analysis'], dict):
+                        company = jd['analysis'].get('company', 'Unknown Company')
+                        role = jd['analysis'].get('job_title', 'Unknown Role')
+                except:
+                    pass
                 
                 results.append({
                     'index': i + 1,
                     'company': company,
                     'role': role,
                     'success': False,
-                    'error': str(e)
+                    'error': str(job_error)
                 })
 
         # Prepare response
-        successful = [r for r in results if r['success']]
-        failed = [r for r in results if not r['success']]
+        successful = [r for r in results if r.get('success', False)]
+        failed = [r for r in results if not r.get('success', False)]
+
+        logger.info(f"📊 Generation complete: {len(successful)} successful, {len(failed)} failed")
 
         return jsonify({
-            'success': True,
-            'message': f'Processed {len(job_descriptions)} job descriptions',
+            'success': len(successful) > 0,
+            'message': f'Processed {len(job_descriptions)} job description(s): {len(successful)} succeeded, {len(failed)} failed',
             'data': {
                 'results': results,
                 'summary': {
@@ -1008,7 +1022,7 @@ def generate_resume():
         })
 
     except Exception as e:
-        logger.error(f"❌ Resume generation error: {str(e)}")
+        logger.error(f"❌ Resume generation critical error: {str(e)}")
         import traceback
         logger.error(traceback.format_exc())
         return jsonify({
