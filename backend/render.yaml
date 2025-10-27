@@ -10,17 +10,20 @@ services:
       pip install --upgrade pip
       echo "📦 Installing Python dependencies..."
       pip install -r requirements.txt
+      echo "🎭 Installing Playwright system dependencies..."
+      playwright install-deps chromium
       echo "🎭 Installing Playwright browsers..."
-      playwright install --with-deps chromium
+      playwright install chromium
       echo "📁 Creating required directories..."
       mkdir -p uploads temp generated_pdfs templates
       echo "📄 Checking template file..."
       if [ ! -f templates/default_template.tex ]; then
-        echo "⚠️ Template file not found! Creating default..."
-        echo "Template should be in repository"
+        echo "⚠️ Template file not found!"
       else
-        echo "✅ Template file found"
+        echo "✅ Template file found: $(ls -lh templates/default_template.tex)"
       fi
+      echo "🎭 Verifying Playwright installation..."
+      python -c "from playwright.sync_api import sync_playwright; print('✅ Playwright import successful')"
       echo "✅ Build complete!"
     startCommand: gunicorn -c gunicorn.conf.py app:app
     envVars:
@@ -36,5 +39,6 @@ services:
         value: 60
       - key: MAX_FILE_SIZE
         value: 10485760
-      - key: PLAYWRIGHT_BROWSERS_PATH
-        value: /opt/render/.cache/ms-playwright
+      # Remove or comment out PLAYWRIGHT_BROWSERS_PATH - let Playwright use defaults
+      # - key: PLAYWRIGHT_BROWSERS_PATH
+      #   value: /opt/render/.cache/ms-playwright
