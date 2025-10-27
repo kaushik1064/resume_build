@@ -1,0 +1,40 @@
+services:
+  - type: web
+    name: resume-builder-backend
+    env: python
+    region: oregon
+    plan: free
+    branch: main
+    buildCommand: |
+      echo "🚀 Starting build process..."
+      pip install --upgrade pip
+      echo "📦 Installing Python dependencies..."
+      pip install -r requirements.txt
+      echo "🎭 Installing Playwright browsers..."
+      playwright install --with-deps chromium
+      echo "📁 Creating required directories..."
+      mkdir -p uploads temp generated_pdfs templates
+      echo "📄 Checking template file..."
+      if [ ! -f templates/default_template.tex ]; then
+        echo "⚠️ Template file not found! Creating default..."
+        echo "Template should be in repository"
+      else
+        echo "✅ Template file found"
+      fi
+      echo "✅ Build complete!"
+    startCommand: gunicorn -c gunicorn.conf.py app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.0
+      - key: GEMINI_API_KEY
+        sync: false
+      - key: FLASK_ENV
+        value: production
+      - key: CORS_ORIGINS
+        value: https://resume-build-inky.vercel.app
+      - key: RATE_LIMIT_PER_MINUTE
+        value: 60
+      - key: MAX_FILE_SIZE
+        value: 10485760
+      - key: PLAYWRIGHT_BROWSERS_PATH
+        value: /opt/render/.cache/ms-playwright
