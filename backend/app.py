@@ -10,7 +10,6 @@ from PIL import Image as PILImage
 from PyPDF2 import PdfReader
 from pdf2image import convert_from_path
 import google.generativeai as genai
-from crawl4ai import AsyncWebCrawler, CrawlerRunConfig, CacheMode
 from datetime import datetime
 import logging
 from flask import Flask, request, jsonify, send_file
@@ -21,6 +20,16 @@ from werkzeug.utils import secure_filename
 import tempfile
 import shutil
 from dotenv import load_dotenv
+import requests
+from bs4 import BeautifulSoup
+
+# Try to import crawl4ai, but have a fallback
+try:
+    from crawl4ai import AsyncWebCrawler, CrawlerRunConfig, CacheMode
+    CRAWL4AI_AVAILABLE = True
+except ImportError:
+    CRAWL4AI_AVAILABLE = False
+    logger.warning("⚠️ crawl4ai not available, using requests fallback")
 
 # Load environment variables
 load_dotenv()
