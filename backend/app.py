@@ -1161,32 +1161,57 @@ def extract_projects_data():
 def get_template():
     """Get the default LaTeX template"""
     try:
-        template_path = os.path.join(app.config['LATEX_TEMPLATE_DIR'], 'default_template.tex')
+        # Try multiple possible paths
+        possible_paths = [
+            os.path.join(app.config['LATEX_TEMPLATE_DIR'], 'default_template.tex'),
+            os.path.join('templates', 'default_template.tex'),
+            os.path.join(os.path.dirname(__file__), 'templates', 'default_template.tex'),
+            'templates/default_template.tex',
+        ]
         
-        if not os.path.exists(template_path):
+        template_content = None
+        used_path = None
+        
+        for template_path in possible_paths:
+            logger.info(f"🔍 Trying template path: {template_path}")
+            if os.path.exists(template_path):
+                logger.info(f"✅ Found template at: {template_path}")
+                with open(template_path, 'r', encoding='utf-8') as f:
+                    template_content = f.read()
+                used_path = template_path
+                break
+        
+        if not template_content:
+            # List what's actually in the directory
+            logger.error(f"❌ Template not found. Checking directories:")
+            for check_dir in ['templates', '.', app.config.get('LATEX_TEMPLATE_DIR', 'templates')]:
+                if os.path.exists(check_dir):
+                    logger.error(f"   {check_dir}/: {os.listdir(check_dir)}")
+            
             return jsonify({
                 'success': False,
-                'error': 'Template file not found'
+                'error': 'Template file not found',
+                'searched_paths': possible_paths
             }), 404
 
-        with open(template_path, 'r', encoding='utf-8') as f:
-            template_content = f.read()
-
+        logger.info(f"📄 Template loaded successfully from: {used_path}")
         return jsonify({
             'success': True,
             'message': 'Template retrieved successfully',
             'data': {
-                'template': template_content
+                'template': template_content,
+                'path': used_path
             }
         })
 
     except Exception as e:
-        logger.error(f"Template retrieval error: {e}")
+        logger.error(f"❌ Template retrieval error: {e}")
+        import traceback
+        logger.error(traceback.format_exc())
         return jsonify({
             'success': False,
-            'error': 'Failed to retrieve template'
+            'error': f'Failed to retrieve template: {str(e)}'
         }), 500
-
 @app.route('/api/analyze/sections', methods=['POST'])
 @limiter.limit("10 per minute")
 def analyze_resume_sections():
