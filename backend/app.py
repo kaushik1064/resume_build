@@ -10,26 +10,17 @@ from PIL import Image as PILImage
 from PyPDF2 import PdfReader
 from pdf2image import convert_from_path
 import google.generativeai as genai
+from crawl4ai import AsyncWebCrawler, CrawlerRunConfig, CacheMode
 from datetime import datetime
 import logging
 from flask import Flask, request, jsonify, send_file
-from flask_cors import CORS
+from flask_cors import CORS, cross_origin
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from werkzeug.utils import secure_filename
 import tempfile
 import shutil
 from dotenv import load_dotenv
-import requests
-from bs4 import BeautifulSoup
-
-# Try to import crawl4ai, but have a fallback
-try:
-    from crawl4ai import AsyncWebCrawler, CrawlerRunConfig, CacheMode
-    CRAWL4AI_AVAILABLE = True
-except ImportError:
-    CRAWL4AI_AVAILABLE = False
-    logger.warning("⚠️ crawl4ai not available, using requests fallback")
 
 # Load environment variables
 load_dotenv()
@@ -43,17 +34,36 @@ logger = logging.getLogger(__name__)
 
 # Initialize Flask app
 app = Flask(__name__)
-CORS(app, 
-     origins=os.getenv('CORS_ORIGINS', 'http://localhost:5173,http://localhost:3000').split(','),
-     supports_credentials=True,
-     allow_headers=["Content-Type", "Authorization"],
-     methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"])
+allowed_origins = os.getenv(
+    'CORS_ORIGINS', 
+    'https://resume-build-inky.vercel.app,http://localhost:5173,http://localhost:3000'
+).split(',')
+
+# Strip whitespace from origins
+allowed_origins = [origin.strip() for origin in allowed_origins]
+
+logger.info(f"🌐 Configuring CORS for origins: {allowed_origins}")
+
+# Configure CORS with explicit settings
+CORS(app,
+     resources={
+         r"/api/*": {
+             "origins": allowed_origins,
+             "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+             "allow_headers": ["Content-Type", "Authorization", "Accept"],
+             "expose_headers": ["Content-Type"],
+             "supports_credentials": True,
+             "max_age": 3600
+         }
+     })
+
 
 # Configure rate limiting
 limiter = Limiter(
     key_func=get_remote_address,
     app=app,
-    default_limits=[f"{os.getenv('RATE_LIMIT_PER_MINUTE', '60')} per minute"]
+    default_limits=[f"{os.getenv('RATE_LIMIT_PER_MINUTE', '60')} per minute"],
+    storage_uri="memory://"
 )
 
 # Configure file upload
@@ -630,6 +640,7 @@ def root():
         'version': '1.0.0',
         'message': 'API is running successfully',
         'gemini_configured': bool(GEMINI_API_KEY),
+        'cors_origins': allowed_origins,
         'endpoints': {
             'health': '/api/health',
             'chat': '/api/chat/message',
